@@ -10,7 +10,8 @@ class variables:
 
 		#overall wing design
 		self.S = self.opti.variable(init_guess = 0.1, lower_bound = 0.01, upper_bound = 1)
-		self.AR = self.opti.variable(init_guess = 6, lower_bound = 4, upper_bound = 15)
+		# self.AR = self.opti.variable(init_guess = 6, lower_bound = 4, upper_bound = 15)
+		self.AR = (5.79 * units.foot) ** 2 / self.S
 		self.taper = 1
 		self.airfoil = asb.Airfoil("sd7032")
 

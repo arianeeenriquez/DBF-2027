@@ -1,36 +1,8 @@
 TODO
 
-# Masses.py:
+Why does it not want maximum span?
 
-check the c_g of the wing
-check tail c_g location
+Why does the plane tail location change so much with different max weights?
 
-figure out the adjustment factor and how necessary it is
+According to AVL it is not currently spirally stable, but how much dihedral do we want??
 
-check area of 1 m chord, check area of control surface
-
-verify landing gear location and take into account ground clearance into aerodynamics for takeoff and stuff
-
-Figure out how to check stability with the sensor dangling out of the plane
-
-
-# Aerodynamics.py
-
-check eval_aero, why is x_ref the quarter chord? what does that mean
-actually make it balance the force
-s
-Make another module where i can couple not like the sd7032 ad solve that way as well
-
-# Propulsion.py
-
-figure shit out!
-
-# Structures.py
-
-write the spar sizing
-
-figure out 
-
-include tapered wing in spar sizing
-
-theres more to check in the bending for spar, add it.

@@ -13,6 +13,7 @@ class variables:
 		#overall wing design
 		self.S = self.opti.variable(init_guess = 0.2, lower_bound = 0.01, upper_bound = 1)
 		self.AR = self.opti.variable(init_guess = 4, lower_bound = 4, upper_bound = 15)
+		# self.AR = (5.79 * units.foot) ** 2 / self.S
 		self.taper = 1
 		self.airfoil = asb.Airfoil("sd7032")
 
@@ -28,7 +29,7 @@ class variables:
 
 		self.airfoil_tail = asb.Airfoil("naca0012")
 		#locations of things
-		self.x_tail =  self.opti.variable(init_guess = 1, lower_bound = 0.5, upper_bound = 1.2)
+		self.x_tail =  self.opti.variable(init_guess = 1, lower_bound = 0.7, upper_bound = 1.2)
 
 		#wing details
 		self.masses = {}
@@ -168,9 +169,28 @@ class variables:
 	                airfoil=self.airfoil,
 	                control_surfaces=[
 	                    asb.ControlSurface(
+	                        name="Flap",
+	                        hinge_point=.6,
+	                        deflection=0,
+	                        symmetric=True
+	                    )
+	                ]
+	            ),
+	            asb.WingXSec(
+	                xyz_le=[
+	                    const_quarter_chord(self.c_r, self.c_t),
+	                    self.b / 4,
+	                    tip_z/2
+	                ],  # UPDATED per Taras/AVL documentation
+	                chord=self.c_r,
+	                twist=0,
+	                airfoil=self.airfoil,
+	                control_surfaces=[
+	                    asb.ControlSurface(
 	                        name="Aileron",
 	                        hinge_point=.7,
-	                        deflection=0
+	                        deflection=0,
+	                        symmetric=False
 	                    )
 	                ]
 	            ),
@@ -328,7 +348,7 @@ class variables:
 	    self.CL = {}
 	    for mission in self.missions:
 	        self.mass[mission] = self.mass_empty + self.payload_mass[mission]
-	        self.opti.subject_to(self.mass[mission] < 55 * units.pound)
+	        self.opti.subject_to(self.mass[mission] < 60 * units.pound)
 	        self.opti.subject_to(self.aero[mission]["CL"] < 0.5)
 	        self.CL[mission] = self.aero[mission]["CL"]
 
@@ -674,7 +694,7 @@ class variables:
 		
 	def general_power(self):
 		self.battery_power = 100 * 3600 #J
-		self.safety_factor = 1.5
+		self.safety_factor = 2
 
 #SENSOR INITIALIZATION
 
