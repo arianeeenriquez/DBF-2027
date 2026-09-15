@@ -8,9 +8,10 @@ class variables:
 		self.opti = asb.Opti()
 		self.order = 2
 
+
 		#overall wing design
 		self.S = self.opti.variable(init_guess = 0.1, lower_bound = 0.01, upper_bound = 1)
-		self.AR = self.opti.variable(init_guess = 6, lower_bound = 4, upper_bound = 15)
+		self.AR = self.opti.variable(init_guess = 10, lower_bound = 4, upper_bound = 15)
 		self.taper = 1
 		self.airfoil = asb.Airfoil("sd7032")
 
@@ -30,11 +31,16 @@ class variables:
 
 		#wing details
 		self.masses = {}
-		self.avl_mass_M2 = asb.MassProperties(mass=0) #running total for AVL mass file export, M2 config (includes sensor + container)
-		self.avl_mass_M3 = asb.MassProperties(mass=0) #running total for AVL mass file export, M3 config (per current mass_M3 formula)
+		self.missions = ("M2", "M3")
+		self.avl_mass = {mission: asb.MassProperties(mass=0) for mission in self.missions} #running totals for AVL mass file export, per mission
 		self.total_mass = 0
 		self.M2_max = 0.48
 		self.M3_max = 2.4
+
+	def _track_avl_mass(self, key, missions=None):
+		#adds self.masses[key] into the running AVL mass total for each mission listed
+		for mission in (missions if missions is not None else self.missions):
+			self.avl_mass[mission] = self.avl_mass[mission] + self.masses[key]
 
 	def optimize(self):	
 		self.constants() 		#establishes known constants
@@ -42,34 +48,26 @@ class variables:
 		self.run_aero_constraints()
 		self.create_sensor()
 
-		given_airfoil = False
+		given_airfoil = True
 		if given_airfoil:
-			#creates a aerosandbox entity of the wing, hor stab and vert stab
-			self.create_wing()
-			self.create_hor_stab()
-			self.create_vert_stab()
-
-			#greates a mass model based on the wing and tail dimensions
+			self.create_aero_plane()
 			self.weights()
 		else:
 			self.weights_no_af()
 
-		self.run_aero_no_af()
+		self.run_aero()
 		self.run_propulsion()
 		self.run_structures()
 
 		self.opti.maximize(self.objective())
 		sol = self.opti.solve()
-
-		# self.avl_mass_M2 = sol(self.avl_mass_M2) #convert from symbolic opti variables to solved numeric values
-		# self.avl_mass_M3 = sol(self.avl_mass_M3)
-		# self.avl_mass_M2.export_AVL_mass_file("example_M2.mass")
-		# self.avl_mass_M3.export_AVL_mass_file("example_M3.mass")
-
+		for mission in self.missions:
+			self.avl_mass[mission] = sol(self.avl_mass[mission]) #convert from symbolic opti variables to solved numeric values
+			self.avl_mass[mission].export_AVL_mass_file(f"example_{mission}.mass")
 		return sol
 
 	def objective(self):
-		return self.M2()
+		return self.both_missions()
 
 #CONSTANT INITIALIZATION
 
@@ -239,6 +237,11 @@ class variables:
 	        ]
 	    ).translate([self.x_tail, 0, 0])
 
+	def create_aero_plane(self):
+		self.create_wing()
+		self.create_hor_stab()
+		self.create_vert_stab()
+
 	def run_aero_constraints(self):
 	    self.constraints_tail_dim()
 	    self.constraints_wing_dim()
@@ -251,78 +254,128 @@ class variables:
 	    self.opti.subject_to(self.x_tail > self.c_r)
 
 	def op_point(self):
-	    self.velocity_M2 = self.opti.variable(
-	        init_guess=20,
-	        lower_bound=0,
-	        upper_bound=85 * units.mph
-	    )
+	    self.velocity = {}
+	    self.alpha = {}
+	    self.q = {}
+	    self.op_pt = {}
 
-	    self.velocity_M3 = self.opti.variable(
-	        init_guess=20,
-	        lower_bound=0,
-	        upper_bound=85 * units.mph
-	    )
+	    for mission in self.missions:
+	        self.velocity[mission] = self.opti.variable(
+	            init_guess=20,
+	            lower_bound=0,
+	            upper_bound=85 * units.mph
+	        )
 
-	    self.q_M2 = 1 / 2 * self.rho * self.velocity_M2**2
-	    self.q_M3 = 1 / 2 * self.rho * self.velocity_M3**2
+	        self.alpha[mission] = self.opti.variable(
+	            init_guess=0,
+	            upper_bound=13,
+	            lower_bound=-10
+	        )
 
-	    self.alpha_M2 = self.opti.variable(
-	        init_guess=0,
-	        upper_bound=13,
-	        lower_bound=-10
-	    )
+	        self.q[mission] = 1 / 2 * self.rho * self.velocity[mission]**2
 
-	    self.alpha_M3 = self.opti.variable(
-	        init_guess=0,
-	        upper_bound=13,
-	        lower_bound=-10
-	    )
-
-	    self.op_pt_M2 = asb.OperatingPoint(
-	        velocity=self.velocity_M2,
-	        alpha=self.alpha_M2,
-	        beta=0
-	    )
-
-	    self.op_pt_M3 = asb.OperatingPoint(
-	        velocity=self.velocity_M3,
-	        alpha=self.alpha_M3,
-	        beta=0
-	    )
+	        self.op_pt[mission] = asb.OperatingPoint(
+	            velocity=self.velocity[mission],
+	            alpha=self.alpha[mission],
+	            beta=0
+	        )
 
 	def eval_aero(self):
 	    # returns an AeroBuildup
 	    self.plane = asb.Airplane(
 	        name="Prototype 0",
-	        xyz_ref=[self.r_c / 4, 0, 0],
+	        xyz_ref=[self.c_r / 4, 0, 0],
 	        wings=[self.wing, self.hor_stab, self.vert_stab]
 	    )
 
-	    self.ab2 = asb.AeroBuildup(
-	        airplane=self.plane,
-	        op_point=self.op_pt_M2
-	    )
+	    self.ab = {}
+	    self.aero = {}
+	    for mission in self.missions:
+	        self.ab[mission] = asb.AeroBuildup(
+	            airplane=self.plane,
+	            op_point=self.op_pt[mission]
+	        )
 
-	    self.ab3 = asb.AeroBuildup(
-	        airplane=self.plane,
-	        op_point=self.op_pt_M3
-	    )
+	        self.aero[mission] = self.ab[mission].run_with_stability_derivatives(
+	            alpha=True,
+	            beta=True,
+	            p=False,
+	            q=False,
+	            r=False
+	        )
 
-	    self.aero_M2 = self.ab2.run_with_stability_derivatives(
-	        alpha=True,
-	        beta=True,
-	        p=False,
-	        q=False,
-	        r=False
-	    )
+	def lift(self):
+	    #cruise: same mass build-up as CL_no_af, but lift comes straight from AeroBuildup instead of a CL formula
+	    self.mass_empty = self.total_mass
 
-	    self.aero_M3 = self.ab3.run_with_stability_derivatives(
-	        alpha=True,
-	        beta=True,
-	        p=False,
-	        q=False,
-	        r=False
-	    )
+	    #payload carried differs by mission: M2 carries sensor + container, M3 carries just the sensor
+	    self.payload_mass = {
+	        "M2": self.mass_sensor + self.mass_container,
+	        "M3": self.mass_sensor,
+	    }
+
+	    self.mass = {}
+	    for mission in self.missions:
+	        self.mass[mission] = self.mass_empty + self.payload_mass[mission]
+	        self.opti.subject_to(self.mass[mission] < 55 * units.pound)
+	        self.opti.subject_to(self.aero[mission]["CL"] < 0.5)
+
+	        #lift = weight in cruise, using AeroBuildup's own lift force instead of solving CL by hand
+	        self.opti.subject_to(self.aero[mission]['L'] == self.mass[mission] * self.g)
+
+	def drag(self):
+		interference_factor = 1.08
+		C_f = 0.004
+		ratio = self.sensor_height / self.sensor_length  #fineness ratio (d/l) of the sensor pod as a streamlined body
+		self.CD_fuse = 0.44 * ratio + 4 * C_f * (1 / ratio) + 4 * C_f * np.sqrt(ratio) #Hoerner 3-12, eqn 25 - on FRONTAL area, not S
+		A_sensor_frontal = self.sensor_height ** 2
+
+		A_fuse_frontal = 2 * self.sensor_height ** 2 
+		self.CD_lg = 0.25
+		A_lg = np.pi * 0.035**2 #frontal area of one gear leg
+
+		#extra drag AREA (CD*A, not a CD-on-S) beyond the bare airframe, by mission - default 0, override as needed
+		self.extra_drag_area = {mission: 0 for mission in self.missions}
+		self.extra_drag_area["M3"] += self.CD_fuse * A_sensor_frontal #sensor pod exposed to the airstream on M3
+		for mission in self.missions:
+		    self.extra_drag_area[mission] += self.CD_lg * A_lg #landing gear, assumed present on both missions
+		    self.extra_drag_area[mission] += self.CD_fuse * A_fuse_frontal
+
+		self.drag = {}
+		for mission in self.missions:
+		    self.drag[mission] =  self.aero[mission]['D'] + self.q[mission] * self.extra_drag_area[mission]
+		    self.drag[mission] *= interference_factor
+
+	def stability_constraints(self):
+	    #static margin target and lateral/longitudinal stability derivatives, per mission
+	    #TODO: fuse_volume isn't modeled elsewhere yet - using the sensor pod's box volume as a stand-in.
+	    #swap this out if you build an actual fuselage shape, since a real body's volume (and its
+	    #moment-arm distribution) will differ from a plain box.
+	    self.fuse_volume = self.sensor_vol 
+
+	    self.static_margin = {}
+	    self.Cnb_corrected = {}
+	    self.Cma_corrected = {}
+	    for mission in self.missions:
+	        x_cg = self.avl_mass[mission].x_cg
+	        self.static_margin[mission] = (self.aero[mission]['x_np'] - x_cg) / self.wing.mean_aerodynamic_chord()
+	        self.Cnb_corrected[mission] = self.aero[mission]['Cnb'] - 2 * self.fuse_volume / (self.S * self.b) #corrected for fuselage contribution, which isn't in the basic plane model
+	        self.Cma_corrected[mission] = self.aero[mission]['Cma'] + 2 * self.fuse_volume / (self.S * self.wing.mean_aerodynamic_chord())
+
+	        self.opti.subject_to([
+	            self.static_margin[mission] == 0.15,
+	            self.Cnb_corrected[mission] > 0.04,
+	            self.Cnb_corrected[mission] < 0.1,
+	            self.Cma_corrected[mission] < -0.8,
+	            self.Cma_corrected[mission] > -1.8,
+	        ])
+ 
+	def run_aero(self):
+		self.op_point()
+		self.eval_aero()
+		self.lift()
+		self.drag()
+		self.stability_constraints()
 
 #REDUCED ORDER AERODYNAMICS	
 	def run_aero_no_af(self):
@@ -334,61 +387,66 @@ class variables:
 	def CL_no_af(self):
 		#cruise
 		self.mass_empty = self.total_mass
-		self.mass_M2 = self.mass_empty + self.mass_sensor + self.mass_container
-		self.mass_M3 = self.mass_empty + self.mass_sensor
 
-		self.opti.subject_to(self.mass_M2 < 55 * units.pound)
-		self.opti.subject_to(self.mass_M3 < 55 * units.pound)
+		#payload carried differs by mission: M2 carries sensor + container, M3 carries just the sensor
+		self.payload_mass = {
+			"M2": self.mass_sensor + self.mass_container,
+			"M3": self.mass_sensor,
+		}
 
+		self.mass = {}
+		self.CL = {}
 		self.N = 1 #cruise condition N = 1
-		self.CL_M2 = 2 * self.N * self.mass_M2 * self.g /(self.velocity_M2 ** 2 * self.S * self.rho) 
-		self.CL_M3 = 2 * self.N * self.mass_M3 * self.g /(self.velocity_M3 ** 2 * self.S * self.rho) 
+		for mission in self.missions:
+			self.mass[mission] = self.mass_empty + self.payload_mass[mission]
+			self.opti.subject_to(self.mass[mission] < 55 * units.pound)
 
-		self.opti.subject_to(self.CL_M2 < 0.5) #cruise CL
-		self.opti.subject_to(self.CL_M3 < 0.5)
+			self.CL[mission] = 2 * self.N * self.mass[mission] * self.g / (self.velocity[mission] ** 2 * self.S * self.rho)
+			self.opti.subject_to(self.CL[mission] < 0.5) #cruise CL
 
 	def CD_plane_no_af(self):
-		self.Re_M2 = self.velocity_M2 * self.c_r / self.nu
-		self.Re_M3 = self.velocity_M3 * self.c_r / self.nu
-		self.CD_lg = 0.25 #landing gear
+	    self.CDp = 0.002 
+	    self.e = 0.9 #oswald efficiency
 
-		C_f = 0.004
-		ratio = self.sensor_height / self.sensor_length
-		self.CD_fuse = 0.44 * ratio + 4 * C_f * (1/ ratio) + 4 * C_f * np.sqrt(ratio) #hoerner 3-12, eqn 25
-
-
-		self.e = 0.9 #oswald efficiency
-		self.CDi_M2 = self.CL_M2 ** 2 / (self.e * np.pi * self.AR)
-		self.CD_M2 = self.CDi_M2
-
-		self.CDi_M3 = self.CL_M3 ** 2 / (self.e * np.pi * self.AR) 
-		self.CD_M3 =  self.CDi_M2 
+	    self.CDi = {}
+	    self.CD = {}
+	    for mission in self.missions:
+	        self.CDi[mission] = self.CL[mission] ** 2 / (self.e * np.pi * self.AR)
+	        self.CD[mission] = self.CDp + self.CDi[mission]
 
 	def drag_no_af(self):
-		self.CD_sensor = self.CD_fuse * (self.sensor_height)**2 * q#sensor is vaguely elliptical
-		A_lg = np.pi*.035**2  
-		self.drag_lg = self.CD_lg * A_lg
-		self.drag_fuse = self.CD_fuse * (self.sensor_height)**2 * 2 * q#fuselage is like twice as area as sensor
+		interference_factor = 1.08
+		C_f = 0.004
+		ratio = self.sensor_height / self.sensor_length  #fineness ratio (d/l) of the sensor pod as a streamlined body
+		self.CD_fuse = 0.44 * ratio + 4 * C_f * (1 / ratio) + 4 * C_f * np.sqrt(ratio) #Hoerner 3-12, eqn 25 - on FRONTAL area, not S
+		A_sensor_frontal = self.sensor_height ** 2
 
+		A_fuse_frontal = 2 * self.sensor_height ** 2 
+		self.CD_lg = 0.25
+		A_lg = np.pi * 0.035**2 #frontal area of one gear leg
 
-		self.drag_M2 =  self.q_M2 * self.CD_M2 * self.S + self.fuse 
-		self.drag_M3 = self.q_M3 * self.CD_M3 * self.S + self.drag_sensor + 
+		#extra drag AREA (CD*A, not a CD-on-S) beyond the bare airframe, by mission - default 0, override as needed
+		self.extra_drag_area = {mission: 0 for mission in self.missions}
+		self.extra_drag_area["M3"] += self.CD_fuse * A_sensor_frontal #sensor pod exposed to the airstream on M3
+		for mission in self.missions:
+		    self.extra_drag_area[mission] += self.CD_lg * A_lg #landing gear, assumed present on both missions
+		    self.extra_drag_area[mission] += self.CD_fuse * A_fuse_frontal
+
+		self.drag = {}
+		for mission in self.missions:
+		    self.drag[mission] = self.q[mission] * (self.CD[mission] * self.S + self.extra_drag_area[mission])
+		    self.drag[mission] *= 1.08
 
 	def op_point_no_af(self):
-	    self.velocity_M2 = self.opti.variable(
-	        init_guess=20,
-	        lower_bound=10,
-	        upper_bound=85 * units.mph
-	    )
-
-	    self.velocity_M3 = self.opti.variable(
-	        init_guess=20,
-	        lower_bound=10,
-	        upper_bound=85 * units.mph
-	    )
-
-	    self.q_M2 = 1 / 2 * self.rho * self.velocity_M2**2
-	    self.q_M3 = 1 / 2 * self.rho * self.velocity_M3**2
+	    self.velocity = {}
+	    self.q = {}
+	    for mission in self.missions:
+	        self.velocity[mission] = self.opti.variable(
+	            init_guess=20,
+	            lower_bound=10,
+	            upper_bound=85 * units.mph
+	        )
+	        self.q[mission] = 1 / 2 * self.rho * self.velocity[mission]**2
 
 #WEIGHT MODEL
 		
@@ -410,26 +468,19 @@ class variables:
 		self.total_mass += self.mass_electronics + self.mass_battery_avionics + self.mass_propeller + self.mass_tail_servo + self.mass_wing_servo + self.mass_landing_gear + self.mass_misc
 
 		self.masses['Electronics'] = asb.MassProperties(mass =self.mass_electronics , x_cg=self.x_electronics)
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses['Electronics']
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses['Electronics']
+		self._track_avl_mass('Electronics')
 		self.masses['Avionics battery'] = asb.MassProperties(mass=self.mass_battery_avionics, x_cg=self.x_battery_avionics) 
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses['Avionics battery']
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses['Avionics battery']
+		self._track_avl_mass('Avionics battery')
 		self.masses['Propeller'] = asb.MassProperties(mass=self.mass_propeller, x_cg = self.x_motor - 0.03) 
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses['Propeller']
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses['Propeller']
+		self._track_avl_mass('Propeller')
 		self.masses['Tail Servos'] = asb.MassProperties(mass=self.mass_tail_servo, x_cg = self.x_tail + self.c_h/2) 
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses['Tail Servos']
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses['Tail Servos']
+		self._track_avl_mass('Tail Servos')
 		self.masses['Wing servos'] = asb.MassProperties(mass=self.mass_wing_servo, x_cg = self.c_r/2) 
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses['Wing servos']
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses['Wing servos']
+		self._track_avl_mass('Wing servos')
 		self.masses['Landing Gear'] = asb.MassProperties(mass=self.mass_landing_gear, x_cg = 0) #UPDATED
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses['Landing Gear']
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses['Landing Gear']
+		self._track_avl_mass('Landing Gear')
 		self.masses['Misc'] = asb.MassProperties(mass=self.mass_misc, x_cg=0) #some of this will be the wing mount/interface, so probably around x=0
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses['Misc']
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses['Misc']
+		self._track_avl_mass('Misc')
 
 	def wing_weight(self): #not including the spar
 		self.area_chord = 6.43354654E-02 #from xfoil
@@ -461,15 +512,13 @@ class variables:
 		self.mass_wing = self.mass_wood + self.mass_foam + self.mass_skin
 		self.total_mass += self.mass_wing
 		self.masses["Wing"] = asb.MassProperties(mass = self.mass_wing, x_cg = self.c_r/3) #check where c_g of wing would be
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses["Wing"]
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses["Wing"]
+		self._track_avl_mass("Wing")
 
 	def boom_weight(self):
 		self.boom_weight = (self.x_tail - self.x_motor + self.c_h / 4) / 1.27 * 0.173 #scaling from last year
 		self.total_mass += self.boom_weight
 		self.masses["Boom"] = asb.MassProperties(mass = self.boom_weight, x_cg = (self.x_tail + self.c_h/4 + self.x_motor) / 2 )
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses["Boom"]
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses["Boom"]
+		self._track_avl_mass("Boom")
 
 	def spar_weight(self):
 		
@@ -486,12 +535,11 @@ class variables:
 
 		self.total_mass += self.mass_spar
 		self.masses["Spar"] = asb.MassProperties(mass = self.mass_spar, x_cg = self.c_r / 4)
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses["Spar"]
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses["Spar"]
+		self._track_avl_mass("Spar")
 
 	def spar_weight_no_af(self):
 		
-		self.spar_cap_thickness = 0.0004 #2mm worth of carbon?
+		self.spar_cap_thickness = 0.002 #2mm worth of carbon?
 		self.spar_wood_thickness = 0.1 * self.c_r - self.spar_cap_thickness
 		self.spar_wood_width = 0.0127 #1/2 inch balsa for now
 		self.vol_spar_wood = self.spar_wood_thickness * self.spar_wood_width * self.proj_span
@@ -504,8 +552,7 @@ class variables:
 
 		self.total_mass += self.mass_spar
 		self.masses["Spar"] = asb.MassProperties(mass = self.mass_spar, x_cg = self.c_r / 4)
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses["Spar"]
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses["Spar"]
+		self._track_avl_mass("Spar")
 
 	def tail_weight(self):
 		self.vol_tail = self.hor_stab.volume() + self.vert_stab.volume()
@@ -518,8 +565,7 @@ class variables:
 
 		self.total_mass += self.mass_tail
 		self.masses["Tail"] = asb.MassProperties(mass = self.mass_tail, x_cg = self.x_tail + self.c_h / 3)
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses["Tail"]
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses["Tail"]
+		self._track_avl_mass("Tail")
 
 	def wing_weight_no_af(self): #not including the spar
 		self.area_chord = 0.07 #from xfoil
@@ -551,8 +597,7 @@ class variables:
 		self.mass_wing = self.mass_wood + self.mass_foam + self.mass_skin
 		self.total_mass += self.mass_wing
 		self.masses["Wing"] = asb.MassProperties(mass = self.mass_wing, x_cg = self.c_r/3) #check where c_g of wing would be
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses["Wing"]
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses["Wing"]
+		self._track_avl_mass("Wing")
 
 	def tail_weight_no_af(self):
 		self.area_chord_tail = 0.07 #a guess for area of chord length 1
@@ -566,8 +611,7 @@ class variables:
 		self.mass_tail = self.mass_foam_tail + self.mass_wetted_tail
 		self.total_mass += self.mass_tail
 		self.masses["Tail"] = asb.MassProperties(mass = self.mass_tail, x_cg = self.x_tail + self.c_h / 3)
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses["Tail"]
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses["Tail"]
+		self._track_avl_mass("Tail")
 
 	def weights(self):
 		self.positions()
@@ -588,11 +632,11 @@ class variables:
 #MISSION DEFINITIONS
 
 	def M2(self):
-		self.M2_score = self.mass_sensor_total / self.M2_time
+		self.M2_score = self.mass_sensor_total / self.duration["M2"]
 		return self.M2_score	
 
 	def M3(self): 
-		self.M3_laps = self.velocity_M3 * 5 * 60 / self.lap_dist
+		self.M3_laps = self.velocity["M3"] * 5 * 60 / self.lap_dist
 		self.M3_score = self.mass_sensor / self.M3_laps
 		return self.M3_score
 
@@ -604,29 +648,30 @@ class variables:
 
 	def run_propulsion(self):
 		self.general_power()
-		self.power_M2()
-		self.power_M3()
 
+		#flight duration differs by mission: M2 is however long 5 laps takes at its solved speed,
+		#M3 is a fixed 5 minute window - override per mission as needed
+		self.M2_distance = self.lap_dist * 5 # 5 laps
+		self.duration = {
+			"M2": self.M2_distance / self.velocity["M2"],
+			"M3": 5 * 60,
+		}
+
+		for mission in self.missions:
+			self.opti.subject_to(self.drag[mission] * self.velocity[mission] * self.duration[mission] < self.battery_power / self.safety_factor)
+		
 	def general_power(self):
 		self.battery_power = 100 * 3600 #J
 		self.safety_factor = 2
 
-	def power_M2(self):
-		self.M2_distance = self.lap_dist * 5 # 5 laps
-		self.M2_time = self.M2_distance / self.velocity_M2
-
-		self.opti.subject_to(self.M2_time * self.drag_M2 * self.velocity_M2 < self.battery_power / self.safety_factor)
-
-	def power_M3(self):
-		self.opti.subject_to(self.drag_M3 * 60 * 5 * self.velocity_M3 < self.battery_power / self.safety_factor)
-
 #SENSOR INITIALIZATION
 
 	def sensor_dim(self):
-		self.sensor_height = self.opti.variable(init_guess = 0.1, lower_bound = 3 * units.inch, upper_bound = 6 * units.inch) #square
+		self.sensor_height = self.opti.variable(init_guess = 0.1, lower_bound = 3 * units.inch, upper_bound = 6 * units.inch)
+		self.sensor_width = self.opti.variable(init_guess = 0.1, lower_bound = 3 * units.inch, upper_bound = 6 * units.inch)
 		self.sensor_length = self.opti.variable(init_guess = 8 * units.inch, lower_bound = 6 * units.inch, upper_bound = 12 * units.inch)
 
-		self.sensor_vol = self.sensor_length * self.sensor_height * self.sensor_height
+		self.sensor_vol = self.sensor_length * self.sensor_width * self.sensor_height
 
 		self.sensor_sim_number = 2
 
@@ -641,10 +686,9 @@ class variables:
 		self.masses['Sensor'] = asb.MassProperties(mass = self.mass_sensor, x_cg = self.x_sensor)
 		self.masses['Container'] = asb.MassProperties(mass = self.mass_container, x_cg = self.x_sensor)
 
-		#M2 flies with both the sensor and its container onboard
-		self.avl_mass_M2 = self.avl_mass_M2 + self.masses['Sensor'] + self.masses['Container']
-		#M3 flies with just the sensor onboard, matching self.mass_M3 in CL_no_af - double check this is what you intend
-		self.avl_mass_M3 = self.avl_mass_M3 + self.masses['Sensor']
+		#M2 flies with both the sensor and its container onboard; M3 flies with just the sensor
+		self._track_avl_mass('Sensor') #both missions
+		self._track_avl_mass('Container', missions=('M2',)) #M2 only
 
 	def sensor_constraint(self):
 		self.opti.subject_to((self.mass_sensor + self.mass_container) / (self.sensor_vol) < 3000) #less than straight steel
@@ -665,8 +709,8 @@ class variables:
 		
 	def wing_bending(self):
 		self.spar_I = 2 * (self.spar_wood_thickness * self.spar_cap_thickness**3 / 12 + (self.spar_wood_thickness/2) **2 * self.spar_cap_thickness * self.spar_wood_width)
-		self.N_max = 10
-		self.max_load_per_length_M2 = self.N_max * self.g * self.mass_M2 / self.proj_span
+		self.N_max = 5
+		self.max_load_per_length_M2 = self.N_max * self.g * self.mass["M2"] / self.proj_span
 
 		self.deflection_M2 = self.max_load_per_length_M2 * (self.b / 2)**4 / (8 * self.carbon_fiber_youngs_modulus * self.spar_I)
 		self.deflection_max = 0.05
@@ -680,4 +724,4 @@ if __name__ == "__main__":
 		# print(f"{name}: {value}")
 		print(f"{name}: {sol.value(value)}")
 
-	sol.value(v.plane).draw()
+	sol.value(v.plane).draw_three_view()
