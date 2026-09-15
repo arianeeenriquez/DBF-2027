@@ -1,0 +1,155 @@
+Prototype 0
+#Mach
+0        ! AeroSandbox note: This is overwritten later to match the current OperatingPoint Mach during the AVL run.
+#IYsym   IZsym   Zsym
+0       0   0
+#Sref    Cref    Bref
+0.5914088486874243 0.37485740528561756 1.5776901839162234
+#Xref    Yref    Zref
+0 0 0
+# CDp
+0
+#===============================================================================
+SURFACE
+wing
+#Nchordwise  Cspace  [Nspanwise   Sspace]
+12   1   12   1
+
+YDUPLICATE
+0
+
+CDCL
+#CL1  CD1  CL2  CD2  CL3  CD3
+0 0 0 0 0 0
+
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+0 0 0 0.37485741 0
+
+AFIL
+M2.avl.af0
+
+CLAF
+1.076655270605379  # Computed using rule from avl_doc.txt
+
+CDCL
+#CL1  CD1  CL2  CD2  CL3  CD3
+0 0 0 0 0 0
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+all_deflections 0 0.7 0 0 0 1
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+0 0.78586597 0.068492732 0.37485741 0
+
+AFIL
+M2.avl.af1
+
+CLAF
+1.076655270605379  # Computed using rule from avl_doc.txt
+
+CDCL
+#CL1  CD1  CL2  CD2  CL3  CD3
+0 0 0 0 0 0
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+all_deflections 0 0.7 0 0 0 1
+#===============================================================================
+SURFACE
+horizontal_tail
+#Nchordwise  Cspace  [Nspanwise   Sspace]
+12   1   12   1
+
+YDUPLICATE
+0
+
+CDCL
+#CL1  CD1  CL2  CD2  CL3  CD3
+0 0 0 0 0 0
+
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+1.0119712 0 0 0.14437336 5
+
+AFIL
+M2.avl.af2
+
+CLAF
+1.0924221254554969  # Computed using rule from avl_doc.txt
+
+CDCL
+#CL1  CD1  CL2  CD2  CL3  CD3
+0 0 0 0 0 0
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+all_deflections 0 0.7 0 0 0 1
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+1.0119712 0.2608407 0 0.14437336 5
+
+AFIL
+M2.avl.af3
+
+CLAF
+1.0924221254554969  # Computed using rule from avl_doc.txt
+
+CDCL
+#CL1  CD1  CL2  CD2  CL3  CD3
+0 0 0 0 0 0
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+all_deflections 0 0.7 0 0 0 1
+#===============================================================================
+SURFACE
+vertical tail
+#Nchordwise  Cspace  [Nspanwise   Sspace]
+12   1   12   1
+
+CDCL
+#CL1  CD1  CL2  CD2  CL3  CD3
+0 0 0 0 0 0
+
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+1.0119712 0 0 0.14437336 0
+
+AFIL
+M2.avl.af4
+
+CLAF
+1.0924221254554969  # Computed using rule from avl_doc.txt
+
+CDCL
+#CL1  CD1  CL2  CD2  CL3  CD3
+0 0 0 0 0 0
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+all_deflections 0 0.75 0 0 0 1
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+1.0119712 0 0.2457739 0.14437336 0
+
+AFIL
+M2.avl.af5
+
+CLAF
+1.0924221254554969  # Computed using rule from avl_doc.txt
+
+CDCL
+#CL1  CD1  CL2  CD2  CL3  CD3
+0 0 0 0 0 0
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+all_deflections 0 0.75 0 0 0 1

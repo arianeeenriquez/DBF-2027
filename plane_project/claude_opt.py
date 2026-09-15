@@ -1,5 +1,6 @@
 import aerosandbox as asb
 import aerosandbox.numpy as np
+import json
 from aerosandbox.tools import units
 
 
@@ -10,8 +11,8 @@ class variables:
 
 
 		#overall wing design
-		self.S = self.opti.variable(init_guess = 0.1, lower_bound = 0.01, upper_bound = 1)
-		self.AR = self.opti.variable(init_guess = 10, lower_bound = 4, upper_bound = 15)
+		self.S = self.opti.variable(init_guess = 0.2, lower_bound = 0.01, upper_bound = 1)
+		self.AR = self.opti.variable(init_guess = 4, lower_bound = 4, upper_bound = 15)
 		self.taper = 1
 		self.airfoil = asb.Airfoil("sd7032")
 
@@ -63,11 +64,13 @@ class variables:
 		sol = self.opti.solve()
 		for mission in self.missions:
 			self.avl_mass[mission] = sol(self.avl_mass[mission]) #convert from symbolic opti variables to solved numeric values
-			self.avl_mass[mission].export_AVL_mass_file(f"example_{mission}.mass")
+			# self.avl_mass[mission].export_AVL_mass_file(f"example_{mission}.mass")
 		return sol
 
 	def objective(self):
-		return self.both_missions()
+		self.M3()
+		self.both_missions()
+		return self.M2()
 
 #CONSTANT INITIALIZATION
 
@@ -290,6 +293,7 @@ class variables:
 
 	    self.ab = {}
 	    self.aero = {}
+	    self.avl_analysis = {}
 	    for mission in self.missions:
 	        self.ab[mission] = asb.AeroBuildup(
 	            airplane=self.plane,
@@ -303,6 +307,12 @@ class variables:
 	            q=False,
 	            r=False
 	        )
+	        self.avl_analysis[mission] = asb.aerodynamics.aero_3D.AVL(
+	        	airplane=self.plane,
+	        	op_point = self.op_pt[mission],
+	        	xyz_ref = [0,0,0]
+	        	)
+
 
 	def lift(self):
 	    #cruise: same mass build-up as CL_no_af, but lift comes straight from AeroBuildup instead of a CL formula
@@ -315,10 +325,12 @@ class variables:
 	    }
 
 	    self.mass = {}
+	    self.CL = {}
 	    for mission in self.missions:
 	        self.mass[mission] = self.mass_empty + self.payload_mass[mission]
 	        self.opti.subject_to(self.mass[mission] < 55 * units.pound)
 	        self.opti.subject_to(self.aero[mission]["CL"] < 0.5)
+	        self.CL[mission] = self.aero[mission]["CL"]
 
 	        #lift = weight in cruise, using AeroBuildup's own lift force instead of solving CL by hand
 	        self.opti.subject_to(self.aero[mission]['L'] == self.mass[mission] * self.g)
@@ -662,7 +674,7 @@ class variables:
 		
 	def general_power(self):
 		self.battery_power = 100 * 3600 #J
-		self.safety_factor = 2
+		self.safety_factor = 1.5
 
 #SENSOR INITIALIZATION
 
@@ -677,12 +689,12 @@ class variables:
 
 	def sensor_weight(self):
 		self.ratio_container_sensor = 0.5
-		self.mass_sensor = self.opti.variable(init_guess = 1, lower_bound = 0) #just the sensor
+		self.mass_sensor = self.opti.variable(init_guess = 10, lower_bound = 1) #just the sensor
 		self.mass_container = self.opti.variable(init_guess= 1, lower_bound = self.mass_sensor * self.ratio_container_sensor) #just the sensor
 		self.mass_sim_sensor = (self.mass_sensor + self.mass_container) * self.sensor_sim_number
 		self.mass_sensor_total = self.mass_sim_sensor + self.mass_sensor + self.mass_container
 
-		self.x_sensor = 0 #TODO: set this to the actual sensor/container CG location, this is just a placeholder
+		self.x_sensor = self.opti.variable(init_guess=0, lower_bound = -0.1) #TODO: set this to the actual sensor/container CG location, this is just a placeholder
 		self.masses['Sensor'] = asb.MassProperties(mass = self.mass_sensor, x_cg = self.x_sensor)
 		self.masses['Container'] = asb.MassProperties(mass = self.mass_container, x_cg = self.x_sensor)
 
@@ -716,12 +728,77 @@ class variables:
 		self.deflection_max = 0.05
 		self.opti.subject_to(self.deflection_M2 < self.deflection_max)
 
+#print statements
+	
+
+	def get_results(self, sol):
+	    #pulls the solved values into a plain nested dict of real numbers - safe to print or save as JSON
+	    return {
+	        "geometry": {
+	            "wing_area_m2": sol(self.S),
+	            "aspect_ratio": sol(self.AR),
+	            "span_m": sol(self.b),
+	            "root_chord_m": sol(self.c_r),
+	            "mean_aero_chord_m": sol(self.MAC),
+	        },
+	        "mass_kg": {
+	            "empty": sol(self.mass_empty),
+	            "wing": sol(self.mass_wing),
+	            "tail": sol(self.mass_tail),
+	            "sensor": sol(self.mass_sensor),
+	            "container": sol(self.mass_container),
+	            "total_M2": sol(self.mass["M2"]),
+	            "total_M3": sol(self.mass["M3"]),
+	        },
+	        "missions": {
+	            mission: {
+	                "velocity_mps": sol(self.velocity[mission]),
+	                "CL": sol(self.CL[mission]),
+	                # "CD": sol(self.CD[mission]),
+	                "drag_N": sol(self.drag[mission]),
+	            }
+	            for mission in self.missions
+	        },
+	        "scores": {
+	            "M2_score": sol(self.M2_score),
+	            "M3_score": sol(self.M3_score),
+	        },
+	    }
+
+	def print_summary(self, sol):
+	    results = self.get_results(sol)
+	    print("\n" + "=" * 50)
+	    print("OPTIMIZATION RESULT".center(50))
+	    print("=" * 50)
+	    for section, values in results.items():
+	        print(f"\n-- {section} --")
+	        if section == "missions":
+	            for mission, vals in values.items():
+	                print(f"  {mission}:")
+	                for k, v in vals.items():
+	                    print(f"    {k:<18} {v:>10.4f}")
+	        else:
+	            for k, v in values.items():
+	                print(f"  {k:<20} {v:>10.4f}")
+	    print("=" * 50 + "\n")
+
+	def save_solution(self, sol, path="solution.json"):
+	    results = self.get_results(sol)
+	    with open(path, "w") as f:
+	        json.dump(results, f, indent=2)
+	    print(f"Saved solution to {path}")
+
 if __name__ == "__main__":
 	v = variables()
 	sol=v.optimize()
+	# v.print_summary(sol)
+	# v.save_solution(sol, "solution.json")
 
+    #print everything
 	for name, value in sorted(vars(v).items()):
 		# print(f"{name}: {value}")
 		print(f"{name}: {sol.value(value)}")
 
 	sol.value(v.plane).draw_three_view()
+
+	sol.value(v.avl_analysis["M2"]).write_avl(filepath="M2.avl")
