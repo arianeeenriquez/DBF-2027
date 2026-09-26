@@ -384,7 +384,6 @@ class variables:
 
 	    self.mass = {}
 	    self.CL = {}
-	    self.stall_speed = 15
 	    for mission in self.missions:
 	        self.mass[mission] = self.mass_empty + self.payload_mass[mission]
 	        self.opti.subject_to(self.mass[mission] < 60 * units.pound)
