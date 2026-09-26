@@ -30,8 +30,6 @@ class variables:
 		self.airfoil_tail = asb.Airfoil("naca0012")
 		#locations of things
 		self.x_tail =  self.opti.variable(init_guess = 1, lower_bound = 0.7, upper_bound = 1.2)
-		# self.payload_mass_frac = self.opti.variable(init_guess = 10, lower_bound = 1, upper_bound = 20)
-		self.payload_mass_frac = 5
 
 		#wing details
 		self.masses = {}
@@ -58,7 +56,8 @@ class variables:
 		self.create_sensor()
 
 		given_airfoil = False
-		
+		self.payload_mass_frac = self.opti.variable(init_guess = 1.5, lower_bound = 1, upper_bound = 2)
+
 		if given_airfoil:
 			self.weights()
 			self.create_aero_plane()
@@ -70,13 +69,12 @@ class variables:
 
 		self.run_propulsion()
 		self.run_structures()
-		self.opti.subject_to(self.mass_empty > self.total_mass)
 
 		self.opti.maximize(self.objective())
 		sol = self.opti.solve(verbose=verbose)
-		# for mission in self.missions:
-		# 	self.avl_mass[mission] = sol(self.avl_mass[mission]) #convert from symbolic opti variables to solved numeric values
-		# 	self.avl_mass[mission].export_AVL_mass_file(f"example_{mission}.mass")
+		for mission in self.missions:
+			self.avl_mass[mission] = sol(self.avl_mass[mission]) #convert from symbolic opti variables to solved numeric values
+			self.avl_mass[mission].export_AVL_mass_file(f"example_{mission}.mass")
 		return sol
 
 	def objective(self):
@@ -384,7 +382,6 @@ class variables:
 
 	    self.mass = {}
 	    self.CL = {}
-	    self.stall_speed = 15
 	    for mission in self.missions:
 	        self.mass[mission] = self.mass_empty + self.payload_mass[mission]
 	        self.opti.subject_to(self.mass[mission] < 60 * units.pound)
@@ -420,10 +417,8 @@ class variables:
 	def takeoff_constraint(self):
 		self.tw_to = (1.21 / (self.g * self.rho * self.CL_max * self.S_g) * self.mass["M2"] * self.g / self.S 
 			+ 0.05 ) #subject to mu and other stuff, look at 2025 design doc
-		self.opti.subject_to(self.tw_to < 0.9)
-		self.stall_speed = 15
-		self.stall_CL = 1.5
-		self.opti.subject_to(1/2 * self.stall_speed ** 2 * self.rho * self.S * self.stall_CL > self.mass["M2"] * self.g)
+		#no longer capping tw_to at an arbitrary 0.9 here - this required T/W is now checked
+		#against the actual actuator-disk static thrust estimate in takeoff_check(), below
 
 	def stability_constraints(self):
 	    #static margin target and lateral/longitudinal stability derivatives, per mission
@@ -717,7 +712,6 @@ class variables:
 
 	def M2(self):
 		self.M2_score = self.mass_sensor_total / self.duration["M2"]
-		self.opti.subject_to(self.duration["M2"]<300)
 		return self.M2_score	
 
 	def M3(self): 
@@ -729,10 +723,14 @@ class variables:
 		self.both_mission_score = self.M2() / self.M2_max + self.M3() / self.M3_max
 		return self.both_mission_score
 
-#PROPULSION VAGUE
+#PROPULSION - ACTUATOR DISK MODEL
+#hardware-agnostic: sized off prop diameter + electrical power budget, not a fitted
+#curve for one specific motor/prop, so it stays valid as the team's hardware choice changes.
+#swap in a real thrust-vs-RPM curve later and this is the place to do it.
 
 	def run_propulsion(self):
 		self.general_power()
+		self.create_propulsion_model()
 
 		#flight duration differs by mission: M2 is however long 5 laps s at its solved speed,
 		#M3 is a fixed 5 minute window - override per mission as needed
@@ -743,13 +741,98 @@ class variables:
 			"M3": 5 * 60,
 		}
 
+		self.cruise_propulsion()
+
+		self.reserve_factor = 0.8 #plan to use at most 80% of nominal battery capacity;
+			#can be tighter than the old 1/safety_factor=0.5 guess now that motor/ESC/prop
+			#losses are modeled explicitly instead of hidden in one blanket fudge factor
 		for mission in self.missions:
-			self.opti.subject_to(self.drag[mission] * self.velocity[mission] * self.duration[mission] < self.battery_power / self.safety_factor)
-			self.extra_battery[mission] = (self.battery_power / self.safety_factor- self.drag[mission] * self.velocity[mission] * self.duration[mission]) / self.battery_power  
-		
+			self.opti.subject_to(self.electrical_power_required[mission] * self.duration[mission] < self.battery_power * self.reserve_factor)
+			self.extra_battery[mission] = (self.battery_power * self.reserve_factor - self.electrical_power_required[mission] * self.duration[mission]) / self.battery_power
+
+		self.takeoff_check()
+		self.climb_performance()
+
 	def general_power(self):
 		self.battery_power = 100 * 3600 #J
-		self.safety_factor = 1.5
+		self.safety_factor = 2
+
+	def create_propulsion_model(self):
+		#prop diameter as a free variable within a plausible class range - tune the bounds
+		#to whatever prop sizes are actually realistic for this airframe/motor class
+		self.prop_diameter = self.opti.variable(init_guess = 16 * units.inch, lower_bound = 10 * units.inch, upper_bound = 20 * units.inch)
+		self.prop_area = np.pi * (self.prop_diameter / 2) ** 2
+
+		#efficiency knockdowns from ideal actuator-disk theory - tighten these once real
+		#hardware/test-stand data exists. Typical ranges for small RC electric props:
+		self.figure_of_merit = 0.75   #0.70-0.85 typical; real prop vs. ideal disk
+		self.motor_efficiency = 0.85  #0.80-0.90 for a decent brushless outrunner
+		self.esc_efficiency = 0.97
+
+		#electrical side - set to whatever battery pack/current limit the team is targeting
+		self.battery_voltage = 22.2   #6S nominal - change to match your pack
+		self.max_current = 60         #A continuous - tie this to your battery's C-rating
+		self.electrical_power_max = self.battery_voltage * self.max_current
+		self.shaft_power_max = self.electrical_power_max * self.motor_efficiency * self.esc_efficiency
+
+	def static_thrust(self):
+		#V=0 actuator-disk result: P_ideal = T^1.5 / sqrt(2*rho*A), solved for T
+		ideal_power_static = self.figure_of_merit * self.shaft_power_max
+		self.T_static = (ideal_power_static * np.sqrt(2 * self.rho * self.prop_area)) ** (2 / 3)
+
+	def cruise_propulsion(self):
+		#thrust = drag in steady level flight; solve the momentum-theory relation for the
+		#induced velocity at the disk, then work back to real electrical power draw
+		self.induced_velocity = {}
+		self.propulsive_efficiency = {}
+		self.electrical_power_required = {}
+
+		for mission in self.missions:
+			self.induced_velocity[mission] = self.opti.variable(init_guess = 5, lower_bound = 1e-3)
+			T = self.drag[mission]
+			V = self.velocity[mission]
+			vi = self.induced_velocity[mission]
+
+			self.opti.subject_to(T == 2 * self.rho * self.prop_area * (V + vi) * vi)
+
+			ideal_power = T * (V + vi)
+			self.propulsive_efficiency[mission] = V / (V + vi) #ideal Froude efficiency, for sanity-checking against known prop data
+			shaft_power = ideal_power / self.figure_of_merit
+			self.electrical_power_required[mission] = shaft_power / (self.motor_efficiency * self.esc_efficiency)
+
+			#can't ask for more electrical power than the pack/ESC can actually deliver, even at cruise
+			self.opti.subject_to(self.electrical_power_required[mission] < self.electrical_power_max)
+
+	def takeoff_check(self):
+		self.static_thrust()
+		self.avg_thrust_ratio = 0.75 #rule-of-thumb average-to-static thrust ratio during ground roll;
+			#refine once a real thrust-vs-RPM curve exists
+		self.T_avg_takeoff = self.T_static * self.avg_thrust_ratio
+		self.takeoff_thrust_margin = 1.15 #require 15% more average thrust than the bare requirement
+		self.opti.subject_to(self.T_avg_takeoff > self.tw_to * self.mass["M2"] * self.g * self.takeoff_thrust_margin)
+
+	def climb_performance(self):
+		#NOTE: CDp/e here come from the reduced-order (no-airfoil) drag polar set in
+		#CD_plane_no_af(). If given_airfoil=True is used instead, recompute CD_climb from
+		#the AeroBuildup/AVL aero build instead of reusing these two constants.
+		self.V_stall = np.sqrt(2 * self.mass["M2"] * self.g / (self.rho * self.S * self.CL_max))
+		self.V_climb = 1.3 * self.V_stall #climb speed as a margin above stall, not the same as cruise speed
+
+		q_climb = 0.5 * self.rho * self.V_climb ** 2
+		self.CL_climb = self.mass["M2"] * self.g / (q_climb * self.S)
+		self.CD_climb = self.CDp + self.CL_climb ** 2 / (self.e * np.pi * self.AR)
+		self.D_climb = q_climb * self.S * self.CD_climb
+
+		#thrust available at V_climb, full throttle - same momentum-theory relation as cruise, solved implicitly
+		self.induced_velocity_climb = self.opti.variable(init_guess = 5, lower_bound = 1e-3)
+		self.T_climb = self.opti.variable(init_guess = 20, lower_bound = 0)
+		ideal_power_climb = self.figure_of_merit * self.shaft_power_max
+		self.opti.subject_to(self.T_climb == 2 * self.rho * self.prop_area * (self.V_climb + self.induced_velocity_climb) * self.induced_velocity_climb)
+		self.opti.subject_to(ideal_power_climb == self.T_climb * (self.V_climb + self.induced_velocity_climb))
+
+		self.rate_of_climb = (self.T_climb - self.D_climb) * self.V_climb / (self.mass["M2"] * self.g)
+		self.min_rate_of_climb = 2.0 #m/s - swap in your actual competition/rule requirement
+		self.opti.subject_to(self.rate_of_climb > self.min_rate_of_climb)
 
 #SENSOR INITIALIZATION
 
@@ -793,7 +876,7 @@ class variables:
 
 	def sensor_weight(self):
 		self.mass_sensor_total = self.mass_sensor + self.mass_container
-		# self.opti.subject_to(self.mass_sensor_total < 12)
+		self.opti.subject_to(self.mass_sensor_total < 12)
 
 		self.x_sensor = self.opti.variable(init_guess=0, lower_bound = -0.1, upper_bound=0.2) #TODO: set this to the actual sensor/container CG location, this is just a placeholder
 		self.masses['Sensor'] = asb.MassProperties(mass = self.mass_sensor, x_cg = self.x_sensor)
