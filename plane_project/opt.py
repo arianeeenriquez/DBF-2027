@@ -30,8 +30,8 @@ class variables:
 		self.airfoil_tail = asb.Airfoil("naca0012")
 		#locations of things
 		self.x_tail =  self.opti.variable(init_guess = 1, lower_bound = 0.7, upper_bound = 1.2)
-		# self.payload_mass_frac = self.opti.variable(init_guess = 10, lower_bound = 1, upper_bound = 20)
-		self.payload_mass_frac = 5
+		self.payload_mass_frac = self.opti.variable(init_guess = 10, lower_bound = 1, upper_bound = 20)
+		# self.payload_mass_frac = 5
 
 		#wing details
 		self.masses = {}
@@ -74,6 +74,7 @@ class variables:
 
 		self.opti.maximize(self.objective())
 		sol = self.opti.solve(verbose=verbose)
+		print(sol.value(self.mass_sensor))
 		# for mission in self.missions:
 		# 	self.avl_mass[mission] = sol(self.avl_mass[mission]) #convert from symbolic opti variables to solved numeric values
 		# 	self.avl_mass[mission].export_AVL_mass_file(f"example_{mission}.mass")
