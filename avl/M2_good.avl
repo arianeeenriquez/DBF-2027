@@ -1,0 +1,162 @@
+Prototype 0
+#Mach
+0        ! AeroSandbox note: This is overwritten later to match the current OperatingPoint Mach during the AVL run.
+#IYsym   IZsym   Zsym
+0       0   0
+#Sref    Cref    Bref
+0.8548320475195411 0.4835460491444603 1.767839999999997
+#Xref    Yref    Zref
+0 0 0
+# CDp
+0
+#===============================================================================
+SURFACE
+wing
+#Nchordwise  Cspace  [Nspanwise   Sspace]
+12   1   12   1
+
+YDUPLICATE
+0
+
+
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+0 0 0 0.48354605 0
+
+AFIL
+sd7032.dat
+
+CLAF
+1.076655270605379  # Computed using rule from avl_doc.txt
+
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+flap 1 0.6 0 0 0 1
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+0 0.44196 0 0.48354605 0
+
+AFIL
+sd7032.dat
+
+CLAF
+1.076655270605379  # Computed using rule from avl_doc.txt
+
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+flap 1 0.6 0 0 0 1
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+aileron 1 0.7 0 0 0 -1
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+0 0.88392 0 0.48354605 0
+
+AFIL
+sd7032.dat
+
+CLAF
+1.076655270605379  # Computed using rule from avl_doc.txt
+
+
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+aileron 1 0.7 0 0 0 -1
+#===============================================================================
+SURFACE
+horizontal_tail
+#Nchordwise  Cspace  [Nspanwise   Sspace]
+12   1   12   1
+
+YDUPLICATE
+0
+
+
+
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+1 0 0.25143254 0.16020765 -5
+
+AFIL
+naca0012.dat
+
+CLAF
+1.0924221254554969  # Computed using rule from avl_doc.txt
+
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+elevator 1 0.7 0 0 0 1
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+1 0.31209496 0.25143254 0.16020765 -5
+
+AFIL
+naca0012.dat
+
+CLAF
+1.0924221254554969  # Computed using rule from avl_doc.txt
+
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+elevator 1 0.7 0 0 0 1
+#===============================================================================
+SURFACE
+vertical tail
+#Nchordwise  Cspace  [Nspanwise   Sspace]
+12   1   12   1
+
+
+
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+1 0 0 0.16020765 0
+
+AFIL
+naca0012.dat
+
+CLAF
+1.0924221254554969  # Computed using rule from avl_doc.txt
+
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+rudder 1 0.75 0 0 0 1
+#--------------------------------------------------
+SECTION
+#Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
+1 0 0.25143254 0.16020765 0
+
+AFIL
+naca0012.dat
+
+CLAF
+1.0924221254554969  # Computed using rule from avl_doc.txt
+
+
+
+CONTROL
+#name, gain, Xhinge, XYZhvec, SgnDup
+rudder 1 0.75 0 0 0 1
+
+
+#==================================================
+BODY
+Untitled
+24 1
+
+BFIL
+M2.avl.fuse1
+
+TRANSLATE
+0 0 0

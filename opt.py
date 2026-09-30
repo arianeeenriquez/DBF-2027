@@ -752,9 +752,9 @@ class variables:
 #SENSOR INITIALIZATION
 
 	def sensor_dim(self):
-		self.sensor_height = self.opti.variable(init_guess = 0.1, lower_bound = 3 * units.inch, upper_bound = 6 * units.inch)
+		self.sensor_height = self.opti.variable(init_guess = 0.12, lower_bound = 5 * units.inch, upper_bound = 10 * units.inch)
 		self.sensor_width = self.opti.variable(init_guess = 0.1, lower_bound = 3 * units.inch, upper_bound = 6 * units.inch)
-		self.sensor_length = self.opti.variable(init_guess = 8 * units.inch, lower_bound = 6 * units.inch, upper_bound = 12 * units.inch)
+		self.sensor_length = self.opti.variable(init_guess = 12 * units.inch, lower_bound = 10 * units.inch, upper_bound = 14 * units.inch)
 
 		self.sensor_vol = self.sensor_length * self.sensor_width * self.sensor_height
 
@@ -951,4 +951,4 @@ if __name__ == "__main__":
 	# 	# print(f"{name}: {value}")
 	# 	print(f"{name}: {sol.value(value)}")
 
-	sol.value(v.avl_analysis["M2"]).write_avl(filepath="M2.avl")
+	# sol.value(v.avl_analysis["M2"]).write_avl(filepath="avl/M2.avl")

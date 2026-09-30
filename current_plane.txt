@@ -1,0 +1,421 @@
+>>I changed the model in avl, so some distances are different, lie the tail is 1 m back, 
+and it is a T tail
+in avl xcg i set to 0.08?
+yea thats about all
+
+AR: 3.7036649066525014
+AR_h: 5.000000048348225
+AR_v: 1.9634360987774135
+CD_fuse: 0.26331370886417355
+CD_lg: 0.25
+CL: {'M2': 0.30948657537437874, 'M3': 0.1730462483150289}
+CL_max: 1.4
+Cma_corrected: {'M2': -0.943611775059838, 'M3': -0.7999999900548557}
+Cnb_corrected: {'M2': 0.041859185367854074, 'M3': 0.03999999047542448}
+M2_distance: 5000
+M2_max: 0.03547310927839548
+M2_score: 0.03490603726980033
+M3_laps: 9.387840093772155
+M3_max: 28.16352056325056
+M3_score: 28.163520562684248
+MAC: 0.4773218000431449
+N: 1
+N_max: 7
+S: 0.8438285709882725
+S_g: 91.43999999999998
+S_h: 0.10000000099863657
+S_v: 0.03926872198796539
+V_h: 0.3067089218760952
+V_v: 0.03251932225961111
+ab: {'M2': AeroBuildup(
+        airplane=Airplane 'Prototype 0' (3 wings, 2 fuselages)
+        op_point=OperatingPoint instance:
+        State variables:
+                atmosphere: Atmosphere (altitude: 0 m (0 ft), method: 'differentiable')                                                             
+                  velocity: 31.29280031261                                                                                                          
+                     alpha: -0.6159670587253908                                                                                                     
+                      beta: 0                                                                                                                       
+                         p: 0.0                                                                                                                     
+                         q: 0.0                                                                                                                     
+                         r: 0.0                                                                                                                     
+        xyz_ref=[0.11933045 0.         0.        ]
+), 'M3': AeroBuildup(
+        airplane=Airplane 'Prototype 0' (3 wings, 2 fuselages)
+        op_point=OperatingPoint instance:
+        State variables:
+                atmosphere: Atmosphere (altitude: 0 m (0 ft), method: 'differentiable')                                                             
+                  velocity: 31.292800312573846                                                                                                      
+                     alpha: -2.51651279905182                                                                                                       
+                      beta: 0                                                                                                                       
+                         p: 0.0                                                                                                                     
+                         q: 0.0                                                                                                                     
+                         r: 0.0                                                                                                                     
+        xyz_ref=[0.11933045 0.         0.        ]
+)}
+aero: {'M2': {'F_g': [12.534490758121015, 9.283419360078593e-15, 156.50997148430167], 'M_g': [-1.2904613154879606e-15, 11.477357422835437, 1.0128930944674779e-14], 'F_b': (-12.534490758121015, 9.283419360078593e-15, -156.50997148430167), 'F_w': (-10.851214394617108, 9.283419360078593e-15, -156.63567849868815), 'M_b': (1.2904613154879606e-15, 11.477357422835437, -1.0128930944674779e-14), 'M_w': (1.3992772695819674e-15, 11.477357422835437, -1.0114472581978384e-14), 'L': 156.63567849868815, 'Y': 9.283419360078593e-15, 'D': 10.851214394617108, 'l_b': 1.2904613154879606e-15, 'm_b': 11.477357422835437, 'n_b': -1.0128930944674779e-14, 'CL': 0.30948657537437874, 'CY': 1.8342523830156568e-17, 'CD': 0.021440231330637338, 'Cl': 1.4422918736537306e-18, 'Cm': 0.04750964216619397, 'Cn': -1.1320660770664175e-17, 'wing_aero_components': [AeroComponentResults(
+        L=184.83673681423812,
+        Y=0.0,
+        D=2.9226852155860517,
+        l_b=-0.0,
+        m_b=-19.480444037284308,
+        n_b=-0.0,
+        span_effective=1.7678399999999983, oswalds_efficiency=0.8125255707318536,
+), AeroComponentResults(
+        L=-28.192187648256322,
+        Y=0.0,
+        D=0.6630317679551057,
+        l_b=-0.0,
+        m_b=31.40518235036945,
+        n_b=-0.0,
+        span_effective=0.7071067881359968, oswalds_efficiency=0.8045365958791053,
+), AeroComponentResults(
+        L=-0.0,
+        Y=9.283419360078593e-15,
+        D=0.19684713848973232,
+        l_b=1.2904613154879606e-15,
+        m_b=0.029670503484462225,
+        n_b=-1.0128930944674779e-14,
+        span_effective=0.27767179601829495, oswalds_efficiency=0.8235029704920868,
+)], 'fuselage_aero_components': [AeroComponentResults(
+        L=-0.004813054287224575,
+        Y=0.0,
+        D=1.4222777625320602,
+        l_b=-0.0,
+        m_b=-0.4443966585583083,
+        n_b=-0.0,
+        span_effective=0.2575211851234331, oswalds_efficiency=0.95,
+), AeroComponentResults(
+        L=-0.004057613006418427,
+        Y=0.0,
+        D=0.5187751957582719,
+        l_b=-0.0,
+        m_b=-0.03265473517586119,
+        n_b=-0.0,
+        span_effective=0.0515042375354489, oswalds_efficiency=0.95,
+)], 'D_profile': 5.723617080321222, 'D_induced': 5.127597314295885, 'CLa': 4.292469820614664, 'CDa': 0.2549195067471808, 'CYa': 1.6026041001523342e-21, 'Cla': -1.651097477944042e-19, 'Cma': -0.9602283637556105, 'Cna': 7.859217053024854e-22, 'x_np': 0.2261076552549875, 'CLb': -5.338370199555625e-07, 'CDb': 1.1546447173984042e-07, 'CYb': -0.1302051045584713, 'Clb': 0.015561902772977284, 'Cmb': -3.117905705625389e-07, 'Cnb': 0.0463457113129864, 'x_np_lateral': 0.7485822951314712}, 'M3': {'F_g': [11.871297962826763, 1.692846346908813e-14, 87.14403922650072], 'M_g': [-2.304836537741362e-15, 18.58892794454875, 1.977381061309386e-14], 'F_b': (-11.871297962826763, 1.692846346908813e-14, -87.14403922650072), 'F_w': (-8.03358869852744, 1.692846346908813e-14, -87.58123509436827), 'M_b': (2.304836537741362e-15, 18.58892794454875, -1.977381061309386e-14), 'M_w': (3.170828684530546e-15, 18.58892794454875, -1.965354174395977e-14), 'L': 87.58123509436827, 'Y': 1.692846346908813e-14, 'D': 8.03358869852744, 'l_b': 2.304836537741362e-15, 'm_b': 18.58892794454875, 'n_b': -1.977381061309386e-14, 'CL': 0.1730462483150289, 'CY': 3.3447885153792376e-17, 'CD': 0.015873062115283897, 'Cl': 2.576014459786619e-18, 'Cm': 0.07694744376816105, 'Cn': -2.210031871254892e-17, 'wing_aero_components': [AeroComponentResults(
+        L=124.30329554482853,
+        Y=0.0,
+        D=3.4991772481591514,
+        l_b=-0.0,
+        m_b=-20.749722954648032,
+        n_b=-0.0,
+        span_effective=1.7678399999999983, oswalds_efficiency=0.8125255707318536,
+), AeroComponentResults(
+        L=-36.571453878497465,
+        Y=0.0,
+        D=0.7869095986136116,
+        l_b=-0.0,
+        m_b=40.71909397287436,
+        n_b=-0.0,
+        span_effective=0.7071067881359968, oswalds_efficiency=0.8045365958791053,
+), AeroComponentResults(
+        L=-0.0,
+        Y=1.692846346908813e-14,
+        D=0.196847138489401,
+        l_b=2.304836537741362e-15,
+        m_b=0.036870951361279755,
+        n_b=-1.977381061309386e-14,
+        span_effective=0.27767179601829495, oswalds_efficiency=0.8235029704920868,
+)], 'fuselage_aero_components': [AeroComponentResults(
+        L=-0.08287477045931568,
+        Y=0.0,
+        D=1.4258683382457271,
+        l_b=-0.0,
+        m_b=-1.3039561730732034,
+        n_b=-0.0,
+        span_effective=0.2575211851234331, oswalds_efficiency=0.95,
+), AeroComponentResults(
+        L=-0.0677318015034953,
+        Y=0.0,
+        D=0.5217083643516021,
+        l_b=-0.0,
+        m_b=-0.11335785196565637,
+        n_b=-0.0,
+        span_effective=0.0515042375354489, oswalds_efficiency=0.95,
+)], 'D_profile': 6.430510687859494, 'D_induced': 1.6030780106679465, 'CLa': 4.060913977619381, 'CDa': 0.10254628183723624, 'CYa': 1.1932003077530298e-20, 'Cla': 1.1565223743090149e-18, 'Cma': -0.8166165787506282, 'Cna': -5.866225734222106e-20, 'x_np': 0.2153159590519872, 'CLb': 5.319700343575434e-07, 'CDb': 2.9477341030870356e-07, 'CYb': -0.13815560766730894, 'Clb': 0.01591739076130263, 'Cmb': -5.626258106548296e-07, 'Cnb': 0.0444865164205568, 'x_np_lateral': 0.6885801859918357}}
+airfoil: Airfoil sd7032 (61 points)
+airfoil_tail: Airfoil naca0012 (399 points)
+alpha: {'M2': -0.6159670587253908, 'M3': -2.51651279905182}
+area_chord: 0.0643354654
+area_wetted_tail: 0.28435609862877526
+avl_analysis: {'M2': AVL(
+        airplane=Airplane 'Prototype 0' (3 wings, 2 fuselages)
+        op_point=OperatingPoint instance:
+        State variables:
+                atmosphere: Atmosphere (altitude: 0 m (0 ft), method: 'differentiable')                                                             
+                  velocity: 31.29280031261                                                                                                          
+                     alpha: -0.6159670587253908                                                                                                     
+                      beta: 0                                                                                                                       
+                         p: 0.0                                                                                                                     
+                         q: 0.0                                                                                                                     
+                         r: 0.0                                                                                                                     
+        xyz_ref=[0, 0, 0]
+), 'M3': AVL(
+        airplane=Airplane 'Prototype 0' (3 wings, 2 fuselages)
+        op_point=OperatingPoint instance:
+        State variables:
+                atmosphere: Atmosphere (altitude: 0 m (0 ft), method: 'differentiable')                                                             
+                  velocity: 31.292800312573846                                                                                                      
+                     alpha: -2.51651279905182                                                                                                       
+                      beta: 0                                                                                                                       
+                         p: 0.0                                                                                                                     
+                         q: 0.0                                                                                                                     
+                         r: 0.0                                                                                                                     
+        xyz_ref=[0, 0, 0]
+)}
+avl_mass: {'M2': MassProperties instance:
+                 Mass :      13.991023
+    Center of Gravity : (    0.15450939,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,     0.34255129,              0]
+                        [             0,              0,     0.34255129], 'M3': MassProperties instance:
+                 Mass :      6.9518339
+    Center of Gravity : (    0.14371769,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,      0.3409421,              0]
+                        [             0,              0,      0.3409421]}
+b: 1.7678399999999983
+b_h: 0.7071067881359968
+b_v: 0.27767179601829495
+balsa_density: 160
+balsa_layup_epoxy_factor: 1.2
+balsa_shear_modulus: 1500000000.0
+balsa_shear_strength: 2100000.0
+balsa_youngs_modulus: 4000000000.0
+basswood_density: 320
+basswood_layup_epoxy_factor: 1.2
+basswood_shear_modulus: 3800000000.0
+basswood_youngs_modulus: 10000000000.0
+basswoord_shear_strength: 6800000.0
+battery_power: 360000
+boom: Fuselage 'Untitled' (4 xsecs)
+boom_weight: 0.19552478369102483
+both_mission_score: 1.9840140314496248
+c_h: 0.14142135625970503
+c_r: 0.4773218000431449
+c_t: 0.4773218000431449
+c_v: 0.14142135625966887
+carbon_fiber_areal_density: 0.2
+carbon_fiber_density: 1750.0
+carbon_fiber_layup_epoxy_factor: 2.2
+carbon_fiber_shear_modulus: 50000000000.0
+carbon_fiber_yield_strength: 600000000.0
+carbon_fiber_youngs_modulus: 230000000000.0
+decalage: -5
+decalage_rad: -0.08726646259971647
+deflection_M2: 0.007885482238267726
+deflection_max: 0.05
+dihedral: 0
+dihedral_rad: 0.0
+drag: {'M2': 17.219615947572404, 'M3': 16.64691721283238}
+duration: {'M2': 287.6060918195706, 'M3': 540.0}
+extra_battery: {'M2': 0.12506515686624545, 'M3': -0.2258374286861125}
+extra_drag_area: {'M2': 0.00945608620223464, 'M3': 0.013703072928271021}
+fiberglass_areal_density: 0.017
+fiberglass_density: 2600.0
+fiberglass_layup_epoxy_factor: 2.2
+fiberglass_shear_modulus: 30000000000.0
+fiberglass_thickness: 0.0001
+fiberglass_youngs_modulus: 70000000000.0
+foam_density: 48
+fuse_volume: 0.003346396290150647
+fuselage: Fuselage 'Untitled' (6 xsecs)
+g: 9.81
+given_airfoil: True
+hor_stab: Wing 'horizontal_tail' (2 xsecs, symmetric)
+kevlar_density: 1400.0
+kevlar_layup_epoxy_factor: 1
+kevlar_shear_modulus: 717000000.0
+kevlar_yield_strength: 3000000000.0
+kevlar_youngs_modulus: 100000000000.0
+lap_dist: 1000
+mass: {'M2': 15.966939704249524, 'M3': 8.92775077414549}
+mass_battery_avionics: 0.07
+mass_container: 7.039188930104033
+mass_control_wood: 0.08160074560236096
+mass_electronics: 0.1915
+mass_empty: 5.927750744173977
+mass_foam: 0.39643738827280806
+mass_foam_tail: 0.07771712273672889
+mass_glass: 0.007666463658931652
+mass_landing_gear: 0.2
+mass_misc: 1.0
+mass_plywood: 0.2116240315563341
+mass_propeller: 0.56
+mass_sensor: 3.000000029971514
+mass_sensor_total: 10.039188960075547
+mass_skin: 0.17580324447969672
+mass_spar: 0.5250644545619304
+mass_spar_cap: 0.34575414719999975
+mass_spar_misc: 0.009
+mass_spar_wood: 0.16264384370299895
+mass_stringer: 0.03959961599999997
+mass_tail: 0.08835204082544508
+mass_tail_servo: 0.07
+mass_wetted_tail: 0.010634918088716196
+mass_wing: 0.9113925569535558
+mass_wing_servo: 0.14
+mass_wood: 0.33915192420105106
+masses: {'Sensor': MassProperties instance:
+                 Mass :              3
+    Center of Gravity : (    0.16516716,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Container': MassProperties instance:
+                 Mass :      7.0391889
+    Center of Gravity : (    0.16516716,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Wing': MassProperties instance:
+                 Mass :     0.91139256
+    Center of Gravity : (    0.15910727,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Electronics': MassProperties instance:
+                 Mass :         0.1915
+    Center of Gravity : (    0.33933928,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Avionics battery': MassProperties instance:
+                 Mass :           0.07
+    Center of Gravity : (    0.37118131,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Propeller': MassProperties instance:
+                 Mass :           0.56
+    Center of Gravity : (         -0.23,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Tail Servos': MassProperties instance:
+                 Mass :           0.07
+    Center of Gravity : (     1.2707107,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Wing servos': MassProperties instance:
+                 Mass :           0.14
+    Center of Gravity : (     0.2386609,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Landing Gear': MassProperties instance:
+                 Mass :            0.2
+    Center of Gravity : (             0,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Misc': MassProperties instance:
+                 Mass :              1
+    Center of Gravity : (             0,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Tail': MassProperties instance:
+                 Mass :    0.088352041
+    Center of Gravity : (     1.2471405,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Boom': MassProperties instance:
+                 Mass :     0.19552478
+    Center of Gravity : (    0.51767768,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0], 'Spar': MassProperties instance:
+                 Mass :     0.52506445
+    Center of Gravity : (    0.11933045,              0,              0)
+       Inertia Tensor : 
+            (about CG)  [             0,              0,              0]
+                        [             0,              0,              0]
+                        [             0,              0,              0]}
+max_load_per_length_M2: 620.2200139666576
+mean_geo_chord: 0.4773218000431449
+mission_no: 0
+missions: ('M2', 'M3')
+monokote_density: 0.06
+n_ribs: 7
+n_stringer: 10
+nu: 1.5111e-05
+op_pt: {'M2': OperatingPoint instance:
+        State variables:
+                atmosphere: Atmosphere (altitude: 0 m (0 ft), method: 'differentiable')                                                             
+                  velocity: 31.29280031261                                                                                                          
+                     alpha: -0.6159670587253908                                                                                                     
+                      beta: 0                                                                                                                       
+                         p: 0.0                                                                                                                     
+                         q: 0.0                                                                                                                     
+                         r: 0.0                                                                                                                     , 'M3': OperatingPoint instance:
+        State variables:
+                atmosphere: Atmosphere (altitude: 0 m (0 ft), method: 'differentiable')                                                             
+                  velocity: 31.292800312573846                                                                                                      
+                     alpha: -2.51651279905182                                                                                                       
+                      beta: 0                                                                                                                       
+                         p: 0.0                                                                                                                     
+                         q: 0.0                                                                                                                     
+                         r: 0.0                                                                                                                     }
+opti: Opti {
+  instance #0
+  #variables: 22 (nx = 22)
+  #parameters: 0 (np = 0)
+  #constraints: 76 (ng = 76)
+  CasADi solver allocated.
+  CasADi solver was called: Solve_Succeeded
+}
+order: 2
+payload_mass: {'M2': 10.039188960075547, 'M3': 3.000000029971514}
+payload_mass_frac: 1.6935916156634032
+plane: Airplane 'Prototype 0' (3 wings, 2 fuselages)
+plywood_density: 550
+plywood_thickness: 0.0025
+proj_span: 1.7678399999999983
+q: {'M2': 538.5816432726866, 'M3': 538.581643271442}
+ratio_container_sensor: 0.5
+rho: 1.1
+rib_chords: [0.4773218000431449, 0.4773218000431449, 0.4773218000431449, 0.4773218000431449, 0.4773218000431449, 0.4773218000431449, 0.4773218000431449, 0.4773218000431449, 0.4773218000431449, 0.4773218000431449, 0.4773218000431449, 0.4773218000431449, 0.4773218000431449, 0.4773218000431449]
+safety_factor: 1.8
+sensor_height: 0.1269999987405539
+sensor_length: 0.25399999700212683
+sensor_vol: 0.003346396290150647
+sensor_width: 0.10373849472480828
+skin_carbon_fiber: 0.10969771422847543
+skin_monokote: 0.050123417116703387
+spar_I: 2.6094653706357006e-08
+spar_cap_thickness: 0.002
+spar_wood_thickness: 0.04527630422711431
+spar_wood_width: 0.0127
+stall_CL: 1.5
+stall_speed: 15
+static_margin: {'M2': 0.14999999997364835, 'M3': 0.1500000000135857}
+stringer_thickness: 0.001
+stringer_width: 0.007
+taper: 1
+total_mass: 3.9518338360319567
+tw_to: 0.21259077134640064
+velocity: {'M2': 31.29280031261, 'M3': 31.292800312573846}
+vert_stab: Wing 'vertical tail' (2 xsecs, asymmetric)
+vol_control_wood: 0.00014836499200429265
+vol_foam: 0.0051825780130203974
+vol_spar_cap: 8.980627199999992e-05
+vol_spar_wood: 0.0010165240231437434
+vol_stringer_wood: 0.0001237487999999999
+vol_tail: 0.0016191067236818518
+vol_wood: 0.000384770966466062
+washout: 0
+washout_rad: 0.0
+wing: Wing 'wing' (3 xsecs, symmetric)
+x_battery: -0.0590712671759851
+x_battery_avionics: 0.37118131369773943
+x_electronics: 0.3393392818518133
+x_motor: -0.1999999974373492
+x_sensor: 0.16516715848086355
+x_tail: 1.2000000119809708
+yMAC: 0.44195999999999963
