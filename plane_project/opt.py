@@ -6,6 +6,7 @@ from aerosandbox.tools import units
 
 class variables:
 	def __init__(self):
+		self.given_airfoil = True
 		self.opti = asb.Opti()
 		self.order = 2
 		self.mission_no=0
@@ -17,11 +18,11 @@ class variables:
 		self.taper = 1
 		self.airfoil = asb.Airfoil("sd7032")
 
-		self.dihedral = 5 #degrees
+		self.dihedral = 0 #degrees
 		self.washout = 0 #degrees
 		#tail design
 		self.AR_v = self.opti.variable(init_guess = 2, lower_bound = 1, upper_bound = 5)
-		self.AR_h = self.opti.variable(init_guess = 4, lower_bound = 1, upper_bound = 5)
+		self.AR_h = self.opti.variable(init_guess = 4, lower_bound = 3, upper_bound = 5)
 		self.S_v = self.opti.variable(init_guess = 0.01, lower_bound = 0.001, upper_bound = .1)
 		self.S_h = self.opti.variable(init_guess = 0.01, lower_bound = 0.001, upper_bound = .1)
 
@@ -30,8 +31,8 @@ class variables:
 		self.airfoil_tail = asb.Airfoil("naca0012")
 		#locations of things
 		self.x_tail =  self.opti.variable(init_guess = 1, lower_bound = 0.7, upper_bound = 1.2)
-		self.payload_mass_frac = self.opti.variable(init_guess = 10, lower_bound = 1, upper_bound = 20)
-		# self.payload_mass_frac = 5
+		# self.payload_mass_frac = self.opti.variable(init_guess = 10, lower_bound = 1, upper_bound = 5)
+		self.payload_mass_frac = 1
 
 		#wing details
 		self.masses = {}
@@ -42,7 +43,7 @@ class variables:
 		self.M3_max = 18.8
 
 		self.ratio_container_sensor = 0.5
-		self.mass_sensor = self.opti.variable(init_guess = 1.5, lower_bound = 1, upper_bound = 2) #just the sensor
+		self.mass_sensor = self.opti.variable(init_guess = 1.5, lower_bound = 1, upper_bound = 3) #just the sensor
 		self.mass_container = self.opti.variable(init_guess= 1, lower_bound = self.mass_sensor * self.ratio_container_sensor) #just the sensor
 		
 
@@ -54,23 +55,22 @@ class variables:
 	def optimize(self, verbose=True):	
 		self.constants() 		#establishes known constants
 		self.run_dimensions()
+		self.positions()
 		self.run_aero_constraints()
 		self.create_sensor()
 
-		given_airfoil = False
 		
-		if given_airfoil:
+		self.create_aero_plane()
+		if self.given_airfoil:
 			self.weights()
-			self.create_aero_plane()
 			self.run_aero()
 		else:
 			self.weights_no_af()
-			self.create_aero_plane()
 			self.run_aero_no_af()
 
 		self.run_propulsion()
 		self.run_structures()
-		self.opti.subject_to(self.mass_empty > self.total_mass)
+		self.opti.subject_to(self.mass_empty > self.total_mass * 1.5)
 
 		self.opti.maximize(self.objective())
 		sol = self.opti.solve(verbose=verbose)
@@ -140,6 +140,8 @@ class variables:
 		self.lap_dist = 1000 #about 1km depending on how u do itLOL
 		self.CL_max = 1.4
 		self.S_g = 300 * units.foot
+
+		self.N = 1 #cruise condition N = 1
 
 #DIMENSION DERIVATION
 
@@ -226,20 +228,6 @@ class variables:
 	        ]
 	    )
 
-	def create_boom(self):
-		self.boom = asb.Fuselage(
-		    xsecs=[ 
-		        asb.FuselageXSec(
-		            xyz_c=[self.x_motor, 0, -units.inch/2],
-		            radius=units.inch,
-		        ),
-		        asb.FuselageXSec(
-		            xyz_c=[self.x_tail, 0,  -units.inch/2],
-		            radius=units.inch,
-		        ),
-
-		    ]
-		)
 
 	def create_hor_stab(self):
 	    self.hor_stab = asb.Wing(
@@ -298,7 +286,6 @@ class variables:
 		self.create_wing()
 		self.create_hor_stab()
 		self.create_vert_stab()
-		self.create_boom()
 		self.plane = asb.Airplane(
 			name="Prototype 0",
 			xyz_ref=[self.c_r / 4, 0, 0],
@@ -448,6 +435,14 @@ class variables:
 	            self.Cma_corrected[mission] < -0.8,
 	            self.Cma_corrected[mission] > -1.8,
 	        ])
+
+	def tail_volume(self):
+		self.V_h = self.S_h *(self.x_tail + self.c_h/4)/ (self.S * self.c_r)
+		self.V_v = self.S_v * (self.x_tail +self.c_h/4) / (self.S * self.b)
+		self.opti.subject_to(self.V_h < 0.6)
+		self.opti.subject_to(self.V_h > 0.3)
+		self.opti.subject_to(self.V_v < 0.05)
+		self.opti.subject_to(self.V_v > 0.02)
  
 	def run_aero(self):
 		self.op_point()
@@ -456,6 +451,7 @@ class variables:
 		self.drag()
 		self.takeoff_constraint()
 		self.stability_constraints()
+		self.tail_volume()
 
 #REDUCED ORDER AERODYNAMICS	
 	def run_aero_no_af(self):
@@ -464,6 +460,7 @@ class variables:
 		self.CD_plane_no_af()
 		self.drag_no_af()
 		self.takeoff_constraint()
+		self.tail_volume()
 
 	def CL_no_af(self):
 		#cruise
@@ -479,7 +476,7 @@ class variables:
 
 		self.mass = {}
 		self.CL = {}
-		self.N = 1 #cruise condition N = 1
+		
 		for mission in self.missions:
 			self.mass[mission] = self.mass_empty + self.payload_mass[mission]
 			self.opti.subject_to(self.mass[mission] < 55 * units.pound)
@@ -496,6 +493,7 @@ class variables:
 	    for mission in self.missions:
 	        self.CDi[mission] = self.CL[mission] ** 2 / (self.e * np.pi * self.AR)
 	        self.CD[mission] = self.CDp + self.CDi[mission]
+	        self.CD[mission] *= 2
 
 	def drag_no_af(self):
 		interference_factor = 1.08
@@ -534,7 +532,7 @@ class variables:
 #WEIGHT MODEL
 		
 	def positions(self):
-		self.x_motor = self.opti.variable(init_guess = -.3, lower_bound= -0.5, upper_bound=-0.1)
+		self.x_motor = self.opti.variable(init_guess = -.3, lower_bound= -0.4, upper_bound=-0.2)
 		self.x_electronics = self.opti.variable(init_guess=-0.1, lower_bound=-0.5, upper_bound=4/5*self.c_r)
 		self.x_battery = self.opti.variable(init_guess=-0.1, lower_bound=-0.5, upper_bound=4/5*self.c_r) #could update to vary between M2 and M3
 		self.x_battery_avionics = self.opti.variable(init_guess=-0.2, lower_bound=-0.5, upper_bound=self.c_r)
@@ -542,11 +540,11 @@ class variables:
 	def misc_weight(self):
 		self.mass_electronics = 0.130 + .0165 + .03 + .015 #130g esc (CC 100a) + 8ch elrs rx + 30 g of wire + 10a CC BEC (2-8s)
 		self.mass_battery_avionics = 0.07 #2s 1Ah lipo
-		self.mass_propeller = .06 #e.g. 16-18" prop
+		self.mass_propeller = .56 #e.g. 16-18" prop and motor
 		self.mass_tail_servo = 2*.035  #2x wing servos for tail
 		self.mass_wing_servo = 4 * .035 #4x main wing servos
 		self.mass_landing_gear = 0.2
-		self.mass_misc = 0.4
+		self.mass_misc = 1.0
 
 		self.total_mass += self.mass_electronics + self.mass_battery_avionics + self.mass_propeller + self.mass_tail_servo + self.mass_wing_servo + self.mass_landing_gear + self.mass_misc
 
@@ -593,7 +591,7 @@ class variables:
 		self.mass_skin = self.mass_skin * 1.1 #1.1 correction factor
 
 		self.mass_wing = self.mass_wood + self.mass_foam + self.mass_skin
-		self.total_mass += self.mass_wing
+		self.total_mass += self.mass_wing 
 		self.masses["Wing"] = asb.MassProperties(mass = self.mass_wing, x_cg = self.c_r/3) #check where c_g of wing would be
 		self._track_avl_mass("Wing")
 
@@ -606,7 +604,7 @@ class variables:
 
 	def spar_weight(self):
 		
-		self.spar_cap_thickness = 0.0004 #2mm worth of carbon?
+		self.spar_cap_thickness = 0.002 #2mm worth of carbon?
 		self.spar_wood_thickness = self.airfoil.local_thickness(x_over_c=0.25) * self.c_r - self.spar_cap_thickness
 		self.spar_wood_width = 0.0127 #1/2 inch balsa for now
 		self.vol_spar_wood = self.spar_wood_thickness * self.spar_wood_width * self.proj_span
@@ -652,7 +650,7 @@ class variables:
 		self._track_avl_mass("Tail")
 
 	def wing_weight_no_af(self): #not including the spar
-		self.area_chord = 0.07 #from xfoil
+		self.area_chord = 0.064 #from xfoil
 		
 		self.n_stringer = 10
 		self.stringer_width = 0.007
@@ -667,7 +665,7 @@ class variables:
 		self.mass_wood = self.mass_plywood + self.mass_stringer
 		self.mass_wood = self.mass_wood * 1.35 #correction factor for extra glue
 
-		self.vol_foam = 0.2 * self.area_chord * self.b  # just the control surfaces, not that much right
+		self.vol_foam = 0.2 * self.area_chord * self.b * (self.c_r)**2 # just the control surfaces, not that much right
 		self.vol_control_wood = 0.08 * self.c_r * self.plywood_thickness * self.proj_span
 		self.mass_control_wood = self.vol_control_wood * self.plywood_density
 		self.mass_foam = self.vol_foam * self.foam_density + self.mass_control_wood
@@ -679,6 +677,7 @@ class variables:
 		self.mass_skin = self.mass_skin * 1.1 #1.1 correction factor
 
 		self.mass_wing = self.mass_wood + self.mass_foam + self.mass_skin
+
 		self.total_mass += self.mass_wing
 		self.masses["Wing"] = asb.MassProperties(mass = self.mass_wing, x_cg = self.c_r/3) #check where c_g of wing would be
 		self._track_avl_mass("Wing")
@@ -698,7 +697,6 @@ class variables:
 		self._track_avl_mass("Tail")
 
 	def weights(self):
-		self.positions()
 		self.wing_weight()
 		self.misc_weight()
 		self.tail_weight()
@@ -740,12 +738,12 @@ class variables:
 		self.extra_battery = {}
 		self.duration = {
 			"M2": self.safety_factor * self.M2_distance / self.velocity["M2"],
-			"M3": 5 * 60,
+			"M3": self.safety_factor * 5 * 60,
 		}
 
 		for mission in self.missions:
-			self.opti.subject_to(self.drag[mission] * self.velocity[mission] * self.duration[mission] < self.battery_power / self.safety_factor)
-			self.extra_battery[mission] = (self.battery_power / self.safety_factor- self.drag[mission] * self.velocity[mission] * self.duration[mission]) / self.battery_power  
+			self.opti.subject_to(self.drag[mission] * self.velocity[mission] * self.duration[mission] < self.battery_power )
+			self.extra_battery[mission] = (self.battery_power / self.safety_factor - self.drag[mission] * self.velocity[mission] * self.duration[mission]) / self.battery_power  
 		
 	def general_power(self):
 		self.battery_power = 100 * 3600 #J
@@ -764,27 +762,49 @@ class variables:
 		self.fuselage = asb.Fuselage(
 		    xsecs=[
 		        asb.FuselageXSec(
-		            xyz_c=[-0.06, 0,  -self.sensor_height/1.2],
+		            xyz_c=[-0.06, 0,  -self.sensor_height/1.1],
 		            radius=0,
 		        ),
 		        asb.FuselageXSec(
-		            xyz_c=[-0.04, 0,  -self.sensor_height/1.2],
+		            xyz_c=[-0.04, 0,  -self.sensor_height/1.1],
 		            radius=self.sensor_height/2,
 		        ),
 		        asb.FuselageXSec(
-		            xyz_c=[0, 0, -self.sensor_height/1.2],
-		            radius=self.sensor_height/1.2,
+		            xyz_c=[0, 0, -self.sensor_height/1.1],
+		            radius=self.sensor_height,
 		        ),
 		        asb.FuselageXSec(
-		            xyz_c=[self.sensor_length, 0, -self.sensor_height/1.2],
-		            radius=self.sensor_height/1.2,
+		            xyz_c=[self.sensor_length*1.5, 0, -self.sensor_height/1.1],
+		            radius=self.sensor_height,
 		        ),
 		        asb.FuselageXSec(
-		            xyz_c=[self.sensor_length + 0.04, 0,  -self.sensor_height/1.2],
+		            xyz_c=[self.sensor_length*1.5 + 0.04, 0,  -self.sensor_height/1.1],
 		            radius=self.sensor_height/2,
 		        ),
 		        asb.FuselageXSec(
-		            xyz_c=[self.sensor_length + 0.06, 0,  -self.sensor_height/1.2],
+		            xyz_c=[self.sensor_length*1.5 + 0.06, 0,  -self.sensor_height/1.1],
+		            radius=0,
+		        ),
+
+		    ]
+		)
+
+		self.boom = asb.Fuselage(
+		    xsecs=[
+		        asb.FuselageXSec(
+		            xyz_c=[self.x_motor, 0,  0],
+		            radius=0,
+		        ),
+		        asb.FuselageXSec(
+		            xyz_c=[self.x_motor+ 0.02, 0, 0],
+		            radius=0.0254,
+		        ),
+		        asb.FuselageXSec(
+		            xyz_c=[self.x_tail,  0,0],
+		            radius=0.0254,
+		        ),
+		        asb.FuselageXSec(
+		            xyz_c=[self.x_tail + 0.02, 0,0],
 		            radius=0,
 		        ),
 
@@ -822,11 +842,13 @@ class variables:
 		
 	def wing_bending(self):
 		self.spar_I = 2 * (self.spar_wood_thickness * self.spar_cap_thickness**3 / 12 + (self.spar_wood_thickness/2) **2 * self.spar_cap_thickness * self.spar_wood_width)
-		self.N_max = 10
+		if not self.given_airfoil:
+			self.spar_I /= 5
+		self.N_max = 7
 		self.max_load_per_length_M2 = self.N_max * self.g * self.mass["M2"] / self.proj_span
 
 		self.deflection_M2 = self.max_load_per_length_M2 * (self.b / 2)**4 / (8 * self.carbon_fiber_youngs_modulus * self.spar_I)
-		self.deflection_max = 0.03
+		self.deflection_max = 0.05
 		self.opti.subject_to(self.deflection_M2 < self.deflection_max)
 
 #print statements
@@ -896,16 +918,16 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="A simple CLI tool example.")
 	parser.add_argument("-m", "--mission", type=int, default=0, help="mission number")
 	parser.add_argument("-v", "--print", type=bool, default=False, help="print")
+	parser.add_argument("-af", "--airfoil", type=bool, default=False)
 	args = parser.parse_args()
 	mission = args.mission
 
-
-
 	ca.GlobalOptions.setNumpyMode(-1)
 	v = variables()
+	v.given_airfoil = args.airfoil
 
 	v.mission_no = mission
-	sol=v.optimize(verbose=False)
+	sol=v.optimize(verbose=True)
 	# v.print_summary(sol)
 	# v.save_solution(sol, "solution.json")
 
@@ -919,6 +941,14 @@ if __name__ == "__main__":
 			# print(f"{name}: {value}")
 			print(f"{name}: {sol.value(value)}")
 
-		# sol.value(v.plane).draw_three_view()
+		sol.value(v.plane).draw_three_view()
 
-		# sol.value(v.avl_analysis["M2"]).write_avl(filepath="M2.avl")
+	# v.CD_plane_no_af()
+	# v.drag_no_af()
+	# v.eval_aero()
+	# v.stability_constraints()
+	# for name, value in sorted(vars(v).items()):
+	# 	# print(f"{name}: {value}")
+	# 	print(f"{name}: {sol.value(value)}")
+
+	sol.value(v.avl_analysis["M2"]).write_avl(filepath="M2.avl")
