@@ -1,0 +1,32 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{Calculation}
+\author{Grace}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Why were historic sensors seemingly max 2lbs?}
+
+A 5 lbs sensor, more than 2kg:
+
+If our plane was 10 lbs, this is half of our plane weight. Any perturbation of the sensor by wind, perhaps, would transfer to the plane at a half of that magnitude. Also 5 lbs is really heavy.
+
+The 2kg would need around 20N of force. Given that servos can only give around 1.2Nm worth of force(HSR-2645CRH Servo).
+
+But if we compound drag along with the weight, $C_d \approx 0.22$ of the ellipsoid (taken from the optimizer), so that drag force is around:
+\[
+	1/2 \rho v^2 C_d S = 1/2 (1.225) (30)^2 (0.22) (0.1)^2 = 1.2N
+\] 
+So that doesn't contribute a whole lot but all together this is about probably 21N of force. so it has to be barely wrapped around the servo, max distance from the servo can be like 5cm from the servo to be able to pull this 5lb weight.
+
+I feel like I don't believe that the servo can carry this much weight up.
+
+\end{document}

@@ -1,0 +1,8 @@
+TODO
+
+Why does it not want maximum span?
+
+Why does the plane tail location change so much with different max weights?
+
+According to AVL it is not currently spirally stable, but how much dihedral do we want??
+
