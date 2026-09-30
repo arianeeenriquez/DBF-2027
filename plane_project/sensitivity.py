@@ -9,10 +9,11 @@ S_arr= []
 score_arr =[]
 m2_arr = []
 m3_arr = []
-for S in numpy.linspace(1, 10, 30):
+for S in numpy.linspace(1, 5, 30):
 	
 	v = variables()
-	v.mass_sensor = S
+	v.AR = S
+	s_label = "Aspect Ratio"
 	print(S)
 	try:
 		sol=v.optimize(verbose=False)
@@ -62,8 +63,9 @@ plt.plot(S_arr, score_pct, label="both")
 plt.plot(S_arr, m2_pct, label="m2")
 plt.plot(S_arr, m3_pct, label="m3")
 plt.axhline(0, color='k', linewidth=0.5, linestyle='--')
-plt.xlabel("S")
+plt.xlabel(s_label)
 plt.ylabel("% difference from midpoint")
+plt.title(f"% difference score vs {s_label}")
 plt.legend()
 plt.show()
 

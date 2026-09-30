@@ -6,7 +6,7 @@ from aerosandbox.tools import units
 
 class variables:
 	def __init__(self):
-		self.given_airfoil = True
+		self.given_airfoil = False
 		self.opti = asb.Opti()
 		self.order = 2
 		self.mission_no=0
@@ -31,16 +31,16 @@ class variables:
 		self.airfoil_tail = asb.Airfoil("naca0012")
 		#locations of things
 		self.x_tail =  self.opti.variable(init_guess = 1, lower_bound = 0.7, upper_bound = 1.2)
-		# self.payload_mass_frac = self.opti.variable(init_guess = 10, lower_bound = 1, upper_bound = 5)
-		self.payload_mass_frac = 1
+		self.payload_mass_frac = self.opti.variable(init_guess = 10, lower_bound = 1, upper_bound = 5)
+		# self.payload_mass_frac = 1
 
 		#wing details
 		self.masses = {}
 		self.missions = ("M2", "M3")
 		self.avl_mass = {mission: asb.MassProperties(mass=0) for mission in self.missions} #running totals for AVL mass file export, per mission
 		self.total_mass = 0
-		self.M2_max = 0.03755135075161628
-		self.M3_max = 18.8
+		self.M2_max = 0.03547310927839548
+		self.M3_max = 28.16352056325056
 
 		self.ratio_container_sensor = 0.5
 		self.mass_sensor = self.opti.variable(init_guess = 1.5, lower_bound = 1, upper_bound = 3) #just the sensor
@@ -747,7 +747,7 @@ class variables:
 		
 	def general_power(self):
 		self.battery_power = 100 * 3600 #J
-		self.safety_factor = 1.5
+		self.safety_factor = 1.8
 
 #SENSOR INITIALIZATION
 
@@ -951,4 +951,4 @@ if __name__ == "__main__":
 	# 	# print(f"{name}: {value}")
 	# 	print(f"{name}: {sol.value(value)}")
 
-	sol.value(v.avl_analysis["M2"]).write_avl(filepath="M2.avl")
+	# sol.value(v.avl_analysis["M2"]).write_avl(filepath="M2.avl")
