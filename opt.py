@@ -409,7 +409,7 @@ class variables:
 			+ 0.05 ) #subject to mu and other stuff, look at 2025 design doc
 		self.opti.subject_to(self.tw_to < 0.9)
 		self.stall_speed = 15
-		self.stall_CL = 1.5
+		self.stall_CL = 2
 		self.opti.subject_to(1/2 * self.stall_speed ** 2 * self.rho * self.S * self.stall_CL > self.mass["M2"] * self.g)
 
 	def stability_constraints(self):
@@ -740,6 +740,8 @@ class variables:
 			"M2": self.safety_factor * self.M2_distance / self.velocity["M2"],
 			"M3": self.safety_factor * 5 * 60,
 		}
+		
+		self.power = self.drag["M2"] * self.velocity["M2"] / 0.6
 
 		for mission in self.missions:
 			self.opti.subject_to(self.drag[mission] * self.velocity[mission] * self.duration[mission] < self.battery_power )

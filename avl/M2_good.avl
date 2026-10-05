@@ -55,7 +55,7 @@ aileron 1 0.7 0 0 0 -1
 #--------------------------------------------------
 SECTION
 #Xle    Yle    Zle     Chord   Ainc  [Nspanwise   Sspace]
-0 0.88392 0 0.48354605 0
+0.08 0.88392 0 0.3 0
 
 AFIL
 sd7032.dat

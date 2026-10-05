@@ -1,202 +1,327 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1050" viewBox="0 0 1400 1050">
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1400" height="1125" viewBox="0 0 1400 1125">
   <defs>
-    <pattern id="minorUp" patternUnits="userSpaceOnUse" x="200" y="91" width="8.636" height="14">
+    <!-- Horizontal ruler ticks: 1-inch, 5-inch, and 10-inch intervals -->
+    <pattern id="minorUp" patternUnits="userSpaceOnUse"
+             x="200" y="106" width="8.636" height="14">
       <path d="M0 14 V10" stroke="#333" stroke-width="1"/>
     </pattern>
-    <pattern id="fiveUp" patternUnits="userSpaceOnUse" x="200" y="91" width="43.18" height="14">
+    <pattern id="fiveUp" patternUnits="userSpaceOnUse"
+             x="200" y="106" width="43.18" height="14">
       <path d="M0 14 V7" stroke="#333" stroke-width="1"/>
     </pattern>
-    <pattern id="tenUp" patternUnits="userSpaceOnUse" x="200" y="91" width="86.36" height="14">
+    <pattern id="tenUp" patternUnits="userSpaceOnUse"
+             x="200" y="106" width="86.36" height="14">
       <path d="M0 14 V1" stroke="#333" stroke-width="1"/>
     </pattern>
 
-    <pattern id="minorDown" patternUnits="userSpaceOnUse" x="200" y="962" width="8.636" height="14">
+    <pattern id="minorDown" patternUnits="userSpaceOnUse"
+             x="200" y="1030" width="8.636" height="14">
       <path d="M0 0 V4" stroke="#333" stroke-width="1"/>
     </pattern>
-    <pattern id="fiveDown" patternUnits="userSpaceOnUse" x="200" y="962" width="43.18" height="14">
+    <pattern id="fiveDown" patternUnits="userSpaceOnUse"
+             x="200" y="1030" width="43.18" height="14">
       <path d="M0 0 V7" stroke="#333" stroke-width="1"/>
     </pattern>
-    <pattern id="tenDown" patternUnits="userSpaceOnUse" x="200" y="962" width="86.36" height="14">
+    <pattern id="tenDown" patternUnits="userSpaceOnUse"
+             x="200" y="1030" width="86.36" height="14">
       <path d="M0 0 V13" stroke="#333" stroke-width="1"/>
     </pattern>
 
-    <pattern id="minorVertical" patternUnits="userSpaceOnUse" x="155" y="117.74" width="14" height="8.636">
+    <!-- Top-view y ruler: ticks extend right from the ruler line -->
+    <pattern id="minorVertical" patternUnits="userSpaceOnUse"
+             x="155" y="450" width="14" height="8.636">
       <path d="M0 0 H4" stroke="#333" stroke-width="1"/>
     </pattern>
-    <pattern id="fiveVertical" patternUnits="userSpaceOnUse" x="155" y="117.74" width="14" height="43.18">
+    <pattern id="fiveVertical" patternUnits="userSpaceOnUse"
+             x="155" y="450" width="14" height="43.18">
       <path d="M0 0 H8" stroke="#333" stroke-width="1"/>
     </pattern>
-    <pattern id="tenVertical" patternUnits="userSpaceOnUse" x="155" y="117.74" width="14" height="86.36">
+    <pattern id="tenVertical" patternUnits="userSpaceOnUse"
+             x="155" y="450" width="14" height="86.36">
       <path d="M0 0 H13" stroke="#333" stroke-width="1"/>
     </pattern>
 
-    <pattern id="minorFront" patternUnits="userSpaceOnUse" x="654.56" y="962" width="8.636" height="14">
+    <!-- Front-view y ruler -->
+    <pattern id="minorFront" patternUnits="userSpaceOnUse"
+             x="1000" y="1030" width="8.636" height="14">
       <path d="M0 0 V4" stroke="#333" stroke-width="1"/>
     </pattern>
-    <pattern id="fiveFront" patternUnits="userSpaceOnUse" x="654.56" y="962" width="43.18" height="14">
+    <pattern id="fiveFront" patternUnits="userSpaceOnUse"
+             x="1000" y="1030" width="43.18" height="14">
       <path d="M0 0 V7" stroke="#333" stroke-width="1"/>
     </pattern>
-    <pattern id="tenFront" patternUnits="userSpaceOnUse" x="654.56" y="962" width="86.36" height="14">
+    <pattern id="tenFront" patternUnits="userSpaceOnUse"
+             x="1000" y="1030" width="86.36" height="14">
       <path d="M0 0 V13" stroke="#333" stroke-width="1"/>
     </pattern>
 
+    <!-- Side-view z ruler: ticks extend right from the vertical axis -->
+    <pattern id="sideMinorVertical" patternUnits="userSpaceOnUse"
+             x="650" y="955" width="14" height="8.636">
+      <path d="M0 0 H4" stroke="#333" stroke-width="1"/>
+    </pattern>
+    <pattern id="sideFiveVertical" patternUnits="userSpaceOnUse"
+             x="650" y="955" width="14" height="43.18">
+      <path d="M0 0 H8" stroke="#333" stroke-width="1"/>
+    </pattern>
+
     <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #222; }
-      .title { font-size: 23px; font-weight: bold; }
-      .viewtitle { font-size: 16px; font-weight: bold; }
-      .small { font-size: 11px; }
-      .ruler-label { font-size: 11px; }
-      .surface { fill: #f3f3f3; stroke: #222; stroke-width: 2; }
-      .tail { fill: #fafafa; stroke: #222; stroke-width: 2; }
-      .centerline { stroke: #777; stroke-width: 1; stroke-dasharray: 7 5; }
-      .hinge { stroke: #b33; stroke-width: 1.5; stroke-dasharray: 5 4; }
-      .ruler { stroke: #333; stroke-width: 1; }
+      text {
+        font-family: Arial, Helvetica, sans-serif;
+        fill: #222;
+      }
+      .title {
+        font-size: 23px;
+        font-weight: bold;
+      }
+      .viewtitle {
+        font-size: 16px;
+        font-weight: bold;
+      }
+      .label {
+        font-size: 13px;
+      }
+      .small {
+        font-size: 11px;
+      }
+      .ruler-label {
+        font-size: 11px;
+      }
+      .surface {
+        fill: #f3f3f3;
+        fill-opacity: 0.75;
+        stroke: #222;
+        stroke-width: 2;
+      }
+      .tail {
+        fill: #fafafa;
+        fill-opacity: 0.8;
+        stroke: #222;
+        stroke-width: 2;
+      }
+      .centerline {
+        stroke: #777;
+        stroke-width: 1;
+        stroke-dasharray: 7 5;
+      }
+      .hinge {
+        stroke: #b33;
+        stroke-width: 1.5;
+        stroke-dasharray: 5 4;
+      }
+      .ruler {
+        stroke: #333;
+        stroke-width: 1;
+      }
+      .boom {
+        fill: #d29338;
+        fill-opacity: 0.9;
+        stroke: #8a5a16;
+        stroke-width: 1.5;
+      }
+      .payload {
+        fill: #b9cde0;
+        fill-opacity: 0.9;
+        stroke: #46627c;
+        stroke-width: 1.5;
+      }
     </style>
   </defs>
 
-  <rect width="1400" height="1050" fill="white"/>
-  <text x="35" y="32" class="title">M2 Prototype 0 — 3-view (fuselage omitted)</text>
-  <text x="35" y="52" class="small">Ruler units are inches. Drawing scale: 340 px/m. x is aft; positive y is upward in the top view.</text>
+  <rect width="1400" height="1125" fill="white"/>
 
-  <!-- TOP VIEW -->
-  <text x="35" y="82" class="viewtitle">TOP VIEW</text>
-
-  <!-- Top ruler: x aft from wing leading edge -->
-  <line x1="200" y1="105" x2="631.8" y2="105" class="ruler"/>
-  <rect x="200" y="91" width="431.8" height="14" fill="url(#minorUp)"/>
-  <rect x="200" y="91" width="431.8" height="14" fill="url(#fiveUp)"/>
-  <rect x="200" y="91" width="431.8" height="14" fill="url(#tenUp)"/>
-  <g class="ruler-label" text-anchor="middle">
-    <text x="200" y="84">0</text>
-    <text x="286.36" y="84">10</text>
-    <text x="372.72" y="84">20</text>
-    <text x="459.08" y="84">30</text>
-    <text x="545.44" y="84">40</text>
-    <text x="631.8" y="84">50</text>
-  </g>
-  <text x="640" y="109" class="small">x aft (in)</text>
-
-  <!-- Top-view y ruler, measured from centerline -->
-  <line x1="155" y1="117.74" x2="155" y2="722.26" class="ruler"/>
-  <rect x="155" y="117.74" width="14" height="604.52" fill="url(#minorVertical)"/>
-  <rect x="155" y="117.74" width="14" height="604.52" fill="url(#fiveVertical)"/>
-  <rect x="155" y="117.74" width="14" height="604.52" fill="url(#tenVertical)"/>
-  <g class="ruler-label" text-anchor="end">
-    <text x="148" y="164.92">+30</text>
-    <text x="148" y="251.28">+20</text>
-    <text x="148" y="337.64">+10</text>
-    <text x="148" y="424">0</text>
-    <text x="148" y="510.36">−10</text>
-    <text x="148" y="596.72">−20</text>
-    <text x="148" y="683.08">−30</text>
-  </g>
-  <text x="106" y="420" class="small" text-anchor="middle"
-        transform="rotate(-90 106 420)">y from centerline (in)</text>
-
-  <!-- Wing -->
-  <rect x="200" y="119.55" width="164.41" height="600.90" class="surface"/>
-  <line x1="180" y1="420" x2="630" y2="420" class="centerline"/>
-
-  <!-- Wing control hinges -->
-  <line x1="298.64" y1="269.73" x2="298.64" y2="570.27" class="hinge"/>
-  <line x1="315.08" y1="119.55" x2="315.08" y2="269.73" class="hinge"/>
-  <line x1="315.08" y1="570.27" x2="315.08" y2="720.45" class="hinge"/>
-
-  <!-- Horizontal tail -->
-  <rect x="540" y="313.89" width="54.47" height="212.22" class="tail"/>
-  <line x1="578.13" y1="313.89" x2="578.13" y2="526.11" class="hinge"/>
-
-  <text x="200" y="755" class="small">
-    Wing: 69.6 in span × 19.0 in chord. Horizontal tail: 24.6 in span × 6.3 in chord.
+  <!-- Title and mass information -->
+  <text x="35" y="32" class="title">
+  Prototype 0 — 3-view 
   </text>
-  <text x="200" y="773" class="small">
-    Red dashed lines mark control hinges: flap 60%, aileron 70%, elevator 70%, rudder 75% chord.
+  <text x="35" y="52" class="small">
+    Ruler units are inches; drawing scale is 8.636 px/in. x is aft; positive y is upward in the top view.
+  </text>
+  <text x="35" y="72" class="small">
+    Empty aircraft mass / stated empty weight: 5.92 kg
+    | Payload mass: 10.0 kg
+    | Combined mass: 15.9 kg
   </text>
 
-  <!-- SIDE VIEW -->
-  <text x="200" y="810" class="viewtitle">SIDE VIEW (x–z)</text>
-  <text x="200" y="829" class="small">Wing and tail shown at their AVL z positions.</text>
+  <!-- ==================== TOP VIEW ==================== -->
+  <text x="35" y="98" class="viewtitle">TOP VIEW</text>
 
-  <!-- Wing edge-on -->
-  <line x1="200" y1="930" x2="364.41" y2="930" stroke="#222" stroke-width="3"/>
-  <text x="210" y="920" class="small">wing</text>
+  <!-- Top-view x ruler: x = 0 at wing leading edge; begins at -5 inches -->
+  <line x1="156.82" y1="120" x2="631.8" y2="120" class="ruler"/>
+  <rect x="156.82" y="106" width="474.98" height="14" fill="url(#minorUp)"/>
+  <rect x="156.82" y="106" width="474.98" height="14" fill="url(#fiveUp)"/>
+  <rect x="156.82" y="106" width="474.98" height="14" fill="url(#tenUp)"/>
 
-  <!-- Vertical tail -->
-  <rect x="540" y="844.51" width="54.47" height="85.49" class="tail"/>
-  <line x1="580.85" y1="844.51" x2="580.85" y2="930" class="hinge"/>
-  <text x="540" y="860" class="small">vertical tail</text>
+  <g class="ruler-label" text-anchor="middle">
+    <text x="200" y="99">0</text>
+    <text x="286.36" y="99">10</text>
+    <text x="372.72" y="99">20</text>
+    <text x="459.08" y="99">30</text>
+    <text x="545.44" y="99">40</text>
+    <text x="631.8" y="99">50</text>
+  </g>
+  <text x="415" y="140" class="small" text-anchor="middle">
+    x aft from wing leading edge (in)
+  </text>
 
-  <!-- Side-view z ruler, positioned between side and front views -->
-  <text x="650" y="817" class="small" text-anchor="middle">z (in)</text>
-  <line x1="650" y1="826.368" x2="650" y2="930" class="ruler"/>
+  <!-- Top-view y ruler, centered on the aircraft centerline -->
+  <line x1="155" y1="147.74" x2="155" y2="752.26" class="ruler"/>
+  <rect x="155" y="147.74" width="14" height="604.52" fill="url(#minorVertical)"/>
+  <rect x="155" y="147.74" width="14" height="604.52" fill="url(#fiveVertical)"/>
+  <rect x="155" y="147.74" width="14" height="604.52" fill="url(#tenVertical)"/>
 
-  <!-- One-inch ticks; longer ticks at 0, 5, and 10 inches -->
-  <line x1="650" y1="930" x2="660" y2="930" class="ruler"/>
-  <line x1="650" y1="921.364" x2="656" y2="921.364" class="ruler"/>
-  <line x1="650" y1="912.728" x2="656" y2="912.728" class="ruler"/>
-  <line x1="650" y1="904.092" x2="656" y2="904.092" class="ruler"/>
-  <line x1="650" y1="895.456" x2="656" y2="895.456" class="ruler"/>
-  <line x1="650" y1="886.82" x2="660" y2="886.82" class="ruler"/>
-  <line x1="650" y1="878.184" x2="656" y2="878.184" class="ruler"/>
-  <line x1="650" y1="869.548" x2="656" y2="869.548" class="ruler"/>
-  <line x1="650" y1="860.912" x2="656" y2="860.912" class="ruler"/>
-  <line x1="650" y1="852.276" x2="656" y2="852.276" class="ruler"/>
-  <line x1="650" y1="843.64" x2="660" y2="843.64" class="ruler"/>
-  <line x1="650" y1="835.004" x2="656" y2="835.004" class="ruler"/>
-  <line x1="650" y1="826.368" x2="656" y2="826.368" class="ruler"/>
-
-  <!-- Side-view ruler labels -->
   <g class="ruler-label" text-anchor="end">
-    <text x="643" y="934">0</text>
-    <text x="643" y="890.82">5</text>
-    <text x="643" y="847.64">10</text>
-    <text x="643" y="830.37">12</text>
+    <text x="148" y="194.92">+30</text>
+    <text x="148" y="281.28">+20</text>
+    <text x="148" y="367.64">+10</text>
+    <text x="148" y="454">0</text>
+    <text x="148" y="540.36">−10</text>
+    <text x="148" y="626.72">−20</text>
+    <text x="148" y="713.08">−30</text>
+  </g>
+  <text x="105" y="450" class="small" text-anchor="middle"
+        transform="rotate(-90 105 450)">
+    y from centerline (in)
+  </text>
+
+  <!-- Wing: 1.76784 m span × 0.48354605 m chord -->
+  <rect x="200" y="149.4672" width="164.4057" height="601.0656" class="surface"/>
+
+  <!-- Horizontal tail: 0.62418992 m span × 0.16020765 m chord -->
+  <rect x="540" y="343.8877" width="54.4706" height="212.2246" class="tail"/>
+
+  <!-- Vertical tail projection in top view: edge-on at the centerline -->
+  <line x1="540" y1="450" x2="594.4706" y2="450"
+        stroke="#222" stroke-width="2"/>
+
+  <!-- Aircraft centerline -->
+  <line x1="180" y1="450" x2="630" y2="450" class="centerline"/>
+
+  <!-- Wing control hinges: flap at 60% chord, aileron at 70% chord -->
+  <line x1="298.6434" y1="299.7336" x2="298.6434" y2="600.2664" class="hinge"/>
+  <line x1="315.0840" y1="149.4672" x2="315.0840" y2="299.7336" class="hinge"/>
+  <line x1="315.0840" y1="600.2664" x2="315.0840" y2="750.5328" class="hinge"/>
+
+  <!-- Boom in plan: 1 in wide, from x = -0.10 m to x = 1.00 m -->
+  <rect x="166" y="445.682" width="374" height="8.636" class="boom"/>
+
+  <!-- Payload in plan: wing-chord length × 6 in wide -->
+  <rect x="200" y="424.092" width="164.4057" height="51.816" class="payload"/>
+
+  <text x="200" y="782" class="small">
+    Blue: payload, 0.48355 m (19.04 in) long × 6 × 6 in profile, centered under the wing.
+  </text>
+  <text x="200" y="800" class="small">
+    Orange: 1 × 1 in boom on the centerline, from x = −0.10 m to the tail leading-edge station x = 1.00 m.
+  </text>
+  <text x="200" y="818" class="small">
+    Red dashed lines show wing hinges: flap at 60% chord and aileron at 70% chord.
+  </text>
+
+  <!-- ==================== SIDE VIEW ==================== -->
+  <text x="200" y="845" class="viewtitle">SIDE VIEW (x–z)</text>
+  <text x="200" y="864" class="small">
+    Payload is shown 1 in below the wing; its 6 in profile extends downward.
+  </text>
+
+  <!-- Boom: 1 in high, from x = -0.10 m to the tail-root station -->
+  <rect x="166" y="955" width="374" height="8.636" class="boom"/>
+
+  <!-- Payload: chord-length in x and 6 in deep; top is 1 in below z = 0 -->
+  <rect x="200" y="963.636" width="164.4057" height="51.816" class="payload"/>
+
+  <!-- Wing, viewed edge-on -->
+  <line x1="200" y1="955" x2="364.4057" y2="955"
+        stroke="#222" stroke-width="3"/>
+  <text x="210" y="946" class="small">wing</text>
+
+  <!-- Vertical tail; AVL height is 0.25143254 m -->
+  <rect x="540" y="869.5129" width="54.4706" height="85.4871" class="tail"/>
+  <line x1="580.8529" y1="869.5129" x2="580.8529" y2="955" class="hinge"/>
+  <text x="542" y="887" class="small">vertical tail</text>
+
+  <!-- Side-view z ruler, placed between side and front views -->
+  <text x="650" y="839" class="small" text-anchor="middle">z (in)</text>
+  <line x1="650" y1="851.368" x2="650" y2="1015.452" class="ruler"/>
+  <rect x="650" y="851.368" width="14" height="164.084"
+        fill="url(#sideMinorVertical)"/>
+  <rect x="650" y="851.368" width="14" height="164.084"
+        fill="url(#sideFiveVertical)"/>
+
+  <g class="ruler-label" text-anchor="end">
+    <text x="643" y="855.4">12</text>
+    <text x="643" y="872.6">10</text>
+    <text x="643" y="915.8">5</text>
+    <text x="643" y="959">0</text>
+    <text x="643" y="1002.2">−5</text>
+    <text x="643" y="1019.5">−7</text>
   </g>
 
-  <!-- Side-view x ruler -->
-  <line x1="200" y1="962" x2="631.8" y2="962" class="ruler"/>
-  <rect x="200" y="962" width="431.8" height="14" fill="url(#minorDown)"/>
-  <rect x="200" y="962" width="431.8" height="14" fill="url(#fiveDown)"/>
-  <rect x="200" y="962" width="431.8" height="14" fill="url(#tenDown)"/>
+  <!-- Side-view x ruler: x = 0 at wing leading edge; includes -5 to 50 in -->
+  <line x1="156.82" y1="1030" x2="631.8" y2="1030" class="ruler"/>
+  <rect x="156.82" y="1030" width="474.98" height="14" fill="url(#minorDown)"/>
+  <rect x="156.82" y="1030" width="474.98" height="14" fill="url(#fiveDown)"/>
+  <rect x="156.82" y="1030" width="474.98" height="14" fill="url(#tenDown)"/>
+
   <g class="ruler-label" text-anchor="middle">
-    <text x="200" y="992">0</text>
-    <text x="286.36" y="992">10</text>
-    <text x="372.72" y="992">20</text>
-    <text x="459.08" y="992">30</text>
-    <text x="545.44" y="992">40</text>
-    <text x="631.8" y="992">50</text>
+    <text x="200" y="1061">0</text>
+    <text x="286.36" y="1061">10</text>
+    <text x="372.72" y="1061">20</text>
+    <text x="459.08" y="1061">30</text>
+    <text x="545.44" y="1061">40</text>
+    <text x="631.8" y="1061">50</text>
   </g>
-  <text x="640" y="992" class="small">x aft (in)</text>
+  <text x="400" y="1081" class="small" text-anchor="middle">
+    x aft from wing leading edge (in)
+  </text>
 
-  <!-- FRONT VIEW -->
-  <text x="1000" y="810" class="viewtitle" text-anchor="middle">FRONT VIEW (y–z)</text>
+  <!-- ==================== FRONT VIEW ==================== -->
+  <text x="1000" y="845" class="viewtitle" text-anchor="middle">
+    FRONT VIEW (y–z)
+  </text>
 
-  <!-- Wing, horizontal tail, and vertical fin -->
-  <line x1="699.1" y1="930" x2="1300.9" y2="930" stroke="#222" stroke-width="3"/>
-  <line x1="893.89" y1="844.51" x2="1106.11" y2="844.51" stroke="#222" stroke-width="3"/>
-  <line x1="1000" y1="844.51" x2="1000" y2="930" stroke="#222" stroke-width="2"/>
-  <line x1="1000" y1="832" x2="1000" y2="942" class="centerline"/>
-  <text x="1000" y="921" class="small" text-anchor="middle">centerline</text>
+  <!-- Payload: 6 in wide, with 6 in profile depth -->
+  <rect x="974.092" y="963.636" width="51.816" height="51.816" class="payload"/>
 
-  <!-- Front-view y ruler, centered on aircraft centerline -->
-  <line x1="654.56" y1="962" x2="1345.44" y2="962" class="ruler"/>
-  <rect x="654.56" y="962" width="690.88" height="14" fill="url(#minorFront)"/>
-  <rect x="654.56" y="962" width="690.88" height="14" fill="url(#fiveFront)"/>
-  <rect x="654.56" y="962" width="690.88" height="14" fill="url(#tenFront)"/>
+  <!-- Boom cross-section: 1 × 1 in, centered laterally -->
+  <rect x="995.682" y="955" width="8.636" height="8.636" class="boom"/>
+
+  <!-- Wing span and horizontal tail span, viewed from the front -->
+  <line x1="699.4672" y1="955" x2="1300.5328" y2="955"
+        stroke="#222" stroke-width="3"/>
+  <line x1="893.8877" y1="869.5129" x2="1106.1123" y2="869.5129"
+        stroke="#222" stroke-width="3"/>
+
+  <!-- Vertical fin -->
+  <line x1="1000" y1="869.5129" x2="1000" y2="955"
+        stroke="#222" stroke-width="2"/>
+  <line x1="1000" y1="858" x2="1000" y2="968" class="centerline"/>
+  <text x="1000" y="947" class="small" text-anchor="middle">centerline</text>
+
+  <!-- Front-view y ruler, centered on the aircraft centerline -->
+  <line x1="654.56" y1="1030" x2="1345.44" y2="1030" class="ruler"/>
+  <rect x="654.56" y="1030" width="690.88" height="14" fill="url(#minorFront)"/>
+  <rect x="654.56" y="1030" width="690.88" height="14" fill="url(#fiveFront)"/>
+  <rect x="654.56" y="1030" width="690.88" height="14" fill="url(#tenFront)"/>
+
   <g class="ruler-label" text-anchor="middle">
-    <text x="654.56" y="992">−40</text>
-    <text x="740.92" y="992">−30</text>
-    <text x="827.28" y="992">−20</text>
-    <text x="913.64" y="992">−10</text>
-    <text x="1000" y="992">0</text>
-    <text x="1086.36" y="992">+10</text>
-    <text x="1172.72" y="992">+20</text>
-    <text x="1259.08" y="992">+30</text>
-    <text x="1345.44" y="992">+40</text>
+    <text x="654.56" y="1061">−40</text>
+    <text x="740.92" y="1061">−30</text>
+    <text x="827.28" y="1061">−20</text>
+    <text x="913.64" y="1061">−10</text>
+    <text x="1000" y="1061">0</text>
+    <text x="1086.36" y="1061">+10</text>
+    <text x="1172.72" y="1061">+20</text>
+    <text x="1259.08" y="1061">+30</text>
+    <text x="1345.44" y="1061">+40</text>
   </g>
-  <text x="1360" y="992" class="small">y (in)</text>
+  <text x="1000" y="1081" class="small" text-anchor="middle">
+    y from centerline (in)
+  </text>
 
-  <text x="35" y="1035" class="small">
-    Geometry is from the AVL sections; fuselage and airfoil thickness are not shown.
+  <!-- Footer -->
+  <text x="35" y="1110" class="small">
+    AVL surface outlines are shown; fuselage and airfoil thickness are omitted. Masses are labels, not a mass-distribution model.
   </text>
 </svg>
