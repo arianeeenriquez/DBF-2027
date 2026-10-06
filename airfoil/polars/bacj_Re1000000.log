@@ -1,0 +1,235 @@
+
+ ===================================================
+  XFOIL Version 6.99
+  Copyright (C) 2000   Mark Drela, Harold Youngren
+
+  This software comes with ABSOLUTELY NO WARRANTY,
+    subject to the GNU General Public License.
+
+  Caveat computor
+ ===================================================
+
+ File  xfoil.def  not found
+
+   QUIT    Exit program
+
+  .OPER    Direct operating point(s)
+  .MDES    Complex mapping design routine
+  .QDES    Surface speed design routine
+  .GDES    Geometry design routine
+
+   SAVE f  Write airfoil to labeled coordinate file
+   PSAV f  Write airfoil to plain coordinate file
+   ISAV f  Write airfoil to ISES coordinate file
+   MSAV f  Write airfoil to MSES coordinate file
+   REVE    Reverse written-airfoil node ordering
+   DELI i  Change written-airfoil file delimiters
+
+   LOAD f  Read buffer airfoil from coordinate file
+   NACA i  Set NACA 4,5-digit airfoil and buffer airfoil
+   INTE    Set buffer airfoil by interpolating two airfoils
+   NORM    Buffer airfoil normalization toggle
+   HALF    Halve the number of points in buffer airfoil
+   XYCM rr Change CM reference location, currently  0.25000 0.00000
+
+   BEND    Display structural properties of current airfoil
+
+   PCOP    Set current-airfoil panel nodes directly from buffer airfoil points
+   PANE    Set current-airfoil panel nodes ( 160 ) based on curvature
+  .PPAR    Show/change paneling
+
+  .PLOP    Plotting options
+
+   WDEF f  Write  current-settings file
+   RDEF f  Reread current-settings file
+   NAME s  Specify new airfoil name
+   NINC    Increment name version number
+
+   Z       Zoom    | (available in all menus)
+   U       Unzoom  | 
+
+ XFOIL   c>  
+ XFOIL   c>  
+ Labeled airfoil file.  Name:  BOEING AIRFOIL J                                
+
+ Number of input coordinate points: 100
+ Counterclockwise ordering
+ Max thickness =     0.100697  at x =   0.400
+ Max camber    =     0.016538  at x =   0.780
+
+  LE  x,y  =   0.00000  -0.00000  |   Chord =   1.00000
+  TE  x,y  =   1.00000   0.00095  |
+
+ Current airfoil nodes set from buffer airfoil nodes ( 100 )
+
+ WARNING: Poor input coordinate distribution
+          Excessive panel angle   84.2  at i =  99
+          Repaneling with PANE and/or PPAR suggested
+           (doing GDES,CADD before repaneling _may_
+            improve excessively coarse LE spacing
+
+ XFOIL   c>  
+ Sharp trailing edge
+
+ Paneling parameters used...
+   Number of panel nodes       160
+   Panel bunching parameter    1.000
+   TE/LE panel density ratio   0.150
+   Refined-area/LE panel density ratio    0.200
+   Top    side refined area x/c limits  1.000 1.000
+   Bottom side refined area x/c limits  1.000 1.000
+
+ XFOIL   c>  
+.OPERi   c>  
+ M  =    0.0000
+ Re =  0.1000E+07
+
+.OPERv   c>  
+.OPERv   c>  
+ Xtr/c     =  1.0000    top    side
+ Xtr/c     =  1.0000    bottom side
+ NcritT    =    9.00   ( 0.070 % turb. level )
+ NcritB    =    9.00   ( 0.070 % turb. level )
+ Vacc      =  0.0100
+ WakeL/c   =   1.000
+
+ Klag  =  5.6000     Uxwt  =    1.00       Kdl =  0.9000
+ A     =  6.7000     B     =  0.7500       KCt = 0.01485
+ CtiniK=  1.8000     CtiniX=  3.3000
+
+..VPAR   c>  
+..VPAR   c>  
+.OPERv   c>  
+.OPERv   c>  
+ Polar  1 newly created for accumulation
+ Airfoil archived with polar: BOEING AIRFOIL J                                
+
+Enter  polar save filename  OR  <return> for no file   s>  
+ New polar save file available
+
+Enter  polar dump filename  OR  <return> for no file   s>  
+ Polar dump file will NOT be written
+
+ Polar accumulation enabled
+
+.OPERva   c>   Calculating unit vorticity distributions ...
+ Calculating wake trajectory ...
+ Calculating source influence matrix ...
+
+ Solving BL system ...
+
+ Initializing BL ...
+    side            1  ...
+ MRCHUE: Inverse mode at  64     Hk =   4.319
+ MRCHUE: Inverse mode at  65     Hk =   5.053
+ MRCHUE: Inverse mode at  66     Hk =   5.778
+ MRCHUE: Inverse mode at  67     Hk =   6.497
+ MRCHUE: Inverse mode at  68     Hk =   7.212
+ MRCHUE: Inverse mode at  69     Hk =   7.924
+ MRCHUE: Inverse mode at  70     Hk =   7.582
+ MRCHUE: Inverse mode at  71     Hk =   4.508
+ MRCHUE: Inverse mode at  72     Hk =   2.746
+ MRCHUE: Inverse mode at  77     Hk =   2.500
+ MRCHUE: Convergence failed at  78  side 1    Res =  0.4307E+03
+    side            2  ...
+ MRCHUE: Inverse mode at  52     Hk =   4.270
+ MRCHUE: Inverse mode at  53     Hk =   5.106
+ MRCHUE: Inverse mode at  54     Hk =   5.930
+ MRCHUE: Inverse mode at  55     Hk =   5.113
+ MRCHUE: Inverse mode at  56     Hk =   2.500
+ MRCHUE: Convergence failed at  84  side 2    Res =  0.2125E+01
+ MRCHUE: Convergence failed at  86  side 2    Res =  0.1272E+00
+ MRCHUE: Convergence failed at  87  side 2    Res =  0.7603E-02
+
+ MRCHDU: Convergence failed at  78  side 1    Res =  0.8748E+01
+ MRCHDU: Convergence failed at  84  side 2    Res =  0.1143E+00
+ MRCHDU: Convergence failed at  86  side 2    Res =  0.3152E+00
+ MRCHDU: Convergence failed at  87  side 2    Res =  0.5470E+00
+ MRCHDU: Convergence failed at  88  side 2    Res =  0.5308E+00
+ MRCHDU: Convergence failed at  89  side 2    Res =  0.4947E+00
+ MRCHDU: Convergence failed at  90  side 2    Res =  0.4479E+00
+ MRCHDU: Convergence failed at  91  side 2    Res =  0.3942E+00
+ MRCHDU: Convergence failed at  92  side 2    Res =  0.3358E+00
+ MRCHDU: Convergence failed at  93  side 2    Res =  0.2753E+00
+ MRCHDU: Convergence failed at  94  side 2    Res =  0.2155E+00
+ MRCHDU: Convergence failed at  95  side 2    Res =  0.1596E+00
+ MRCHDU: Convergence failed at  96  side 2    Res =  0.1108E+00
+ MRCHDU: Convergence failed at  97  side 2    Res =  0.7150E-01
+ MRCHDU: Convergence failed at 100  side 2    Res =  0.5491E-04
+ MRCHDU: Convergence failed at 101  side 2    Res =  0.2418E+00
+ MRCHDU: Convergence failed at 102  side 2    Res =  0.1323E+00
+ MRCHDU: Convergence failed at 103  side 2    Res =  0.1268E+00
+ MRCHDU: Convergence failed at 104  side 2    Res =  0.1222E+00
+ MRCHDU: Convergence failed at 105  side 2    Res =  0.2342E+00
+ MRCHDU: Convergence failed at 106  side 2    Res =  0.1721E+00
+ MRCHDU: Convergence failed at 107  side 2    Res =  0.1187E+00
+ Side 1  free  transition at x/c =  0.8876   70
+ Side 2  free  transition at x/c =  0.6349   55
+
+   1   rms: 0.1878E+01   max: 0.8319E+01   D at   85  2   RLX: 0.086
+       a =  0.000      CL = -0.1399
+      Cm =  0.0120     CD =  0.00027   =>   CDf =  0.00439    CDp = -0.00412
+
+ MRCHDU: Convergence failed at  98  side 2    Res =  0.1554E-01
+ Side 1  free  transition at x/c =  0.8750   68
+ Side 2  free  transition at x/c =  0.6259   56
+
+   2   rms: 0.1008E+01   max: 0.1168E+02   C at  108  2   RLX: 0.115
+       a =  0.000      CL = -0.1533
+      Cm =  0.0157     CD =  0.00038   =>   CDf =  0.00411    CDp = -0.00373
+
+ MRCHDU: Convergence failed at  98  side 2    Res =  0.4372E-02
+ MRCHDU: Convergence failed at 107  side 2    Res =  0.1793E+00
+ MRCHDU: Convergence failed at 108  side 2    Res =  0.2425E+00
+ Side 1  free  transition at x/c =  0.8808   69
+ Side 2  free  transition at x/c =  0.6268   56
+
+   3   rms: 0.1375E+01   max: 0.2185E+02   C at  108  2   RLX: 0.069
+       a =  0.000      CL = -0.1588
+      Cm =  0.0152     CD =  0.00035   =>   CDf =  0.00412    CDp = -0.00376
+
+ MRCHDU: Convergence failed at  85  side 2    Res =  0.2006E+00
+ MRCHDU: Convergence failed at  98  side 2    Res =  0.1200E-02
+ MRCHDU: Convergence failed at 106  side 2    Res =  0.2404E+00
+ MRCHDU: Convergence failed at 107  side 2    Res =  0.2494E+00
+ MRCHDU: Convergence failed at 108  side 2    Res =  0.2420E+00
+ Side 1  free  transition at x/c =  0.8795   69
+ Side 2  free  transition at x/c =  0.6272   56
+
+   4   rms: 0.1188E+01   max: 0.3895E+01   D at   86  2   RLX: 0.122
+       a =  0.000      CL = -0.2828
+      Cm =  0.0460     CD =  0.00041   =>   CDf =  0.00464    CDp = -0.00423
+
+ MRCHDU: Convergence failed at  86  side 2    Res =  0.2387E+00
+ Side 1  free  transition at x/c =  0.8716   67
+ Side 2  free  transition at x/c =  0.6101   56
+
+   5   rms: 0.8700E+00   max: -.3479E+01   D at   89  2   RLX: 0.129
+       a =  0.000      CL = -0.2321
+      Cm =  0.0340     CD =  0.00044   =>   CDf =  0.00430    CDp = -0.00386
+
+ MRCHDU: Convergence failed at  69  side 1    Res =  0.2538E+01
+ MRCHDU: Convergence failed at  70  side 1    Res =  0.4508E+01
+
+Program received signal SIGFPE: Floating-point exception - erroneous arithmetic operation.
+
+Backtrace for this error:
+#0  0x702921a23e59 in ???
+#1  0x702921a22e75 in ???
+#2  0x70292164532f in ???
+	at ./signal/../sysdeps/unix/sysv/linux/x86_64/libc_sigaction.c:0
+#3  0x61cc1168a2b6 in ???
+#4  0x61cc1168f04d in ???
+#5  0x61cc1167fb9e in ???
+#6  0x61cc1168275b in ???
+#7  0x61cc1164c67a in ???
+#8  0x61cc11650a77 in ???
+#9  0x61cc1163c406 in ???
+#10  0x61cc11632758 in ???
+#11  0x70292162a1c9 in __libc_start_call_main
+	at ../sysdeps/nptl/libc_start_call_main.h:58
+#12  0x70292162a28a in __libc_start_main_impl
+	at ../csu/libc-start.c:360
+#13  0x61cc11632784 in ???
+#14  0xffffffffffffffff in ???
+timeout: the monitored command dumped core

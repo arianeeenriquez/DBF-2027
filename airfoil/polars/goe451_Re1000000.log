@@ -1,0 +1,158 @@
+
+ ===================================================
+  XFOIL Version 6.99
+  Copyright (C) 2000   Mark Drela, Harold Youngren
+
+  This software comes with ABSOLUTELY NO WARRANTY,
+    subject to the GNU General Public License.
+
+  Caveat computor
+ ===================================================
+
+ File  xfoil.def  not found
+
+   QUIT    Exit program
+
+  .OPER    Direct operating point(s)
+  .MDES    Complex mapping design routine
+  .QDES    Surface speed design routine
+  .GDES    Geometry design routine
+
+   SAVE f  Write airfoil to labeled coordinate file
+   PSAV f  Write airfoil to plain coordinate file
+   ISAV f  Write airfoil to ISES coordinate file
+   MSAV f  Write airfoil to MSES coordinate file
+   REVE    Reverse written-airfoil node ordering
+   DELI i  Change written-airfoil file delimiters
+
+   LOAD f  Read buffer airfoil from coordinate file
+   NACA i  Set NACA 4,5-digit airfoil and buffer airfoil
+   INTE    Set buffer airfoil by interpolating two airfoils
+   NORM    Buffer airfoil normalization toggle
+   HALF    Halve the number of points in buffer airfoil
+   XYCM rr Change CM reference location, currently  0.25000 0.00000
+
+   BEND    Display structural properties of current airfoil
+
+   PCOP    Set current-airfoil panel nodes directly from buffer airfoil points
+   PANE    Set current-airfoil panel nodes ( 160 ) based on curvature
+  .PPAR    Show/change paneling
+
+  .PLOP    Plotting options
+
+   WDEF f  Write  current-settings file
+   RDEF f  Reread current-settings file
+   NAME s  Specify new airfoil name
+   NINC    Increment name version number
+
+   Z       Zoom    | (available in all menus)
+   U       Unzoom  | 
+
+ XFOIL   c>  
+ XFOIL   c>  
+ Labeled airfoil file.  Name:  GOE 451 AIRFOIL                                 
+
+ Number of input coordinate points:  33
+ Counterclockwise ordering
+ Max thickness =     0.044011  at x =   0.300
+ Max camber    =     0.055105  at x =   0.400
+
+  LE  x,y  =  -0.00019   0.00099  |   Chord =   1.00019
+  TE  x,y  =   1.00000   0.00000  |
+
+ Current airfoil nodes set from buffer airfoil nodes (  33 )
+
+ WARNING: Poor input coordinate distribution
+          Excessive panel angle   88.0  at i =  16
+          Repaneling with PANE and/or PPAR suggested
+           (doing GDES,CADD before repaneling _may_
+            improve excessively coarse LE spacing
+
+ XFOIL   c>   Paneling convergence failed.  Continuing anyway...
+
+ Sharp trailing edge
+
+ Paneling parameters used...
+   Number of panel nodes       160
+   Panel bunching parameter    1.000
+   TE/LE panel density ratio   0.150
+   Refined-area/LE panel density ratio    0.200
+   Top    side refined area x/c limits  1.000 1.000
+   Bottom side refined area x/c limits  1.000 1.000
+
+ XFOIL   c>  
+.OPERi   c>  
+ M  =    0.0000
+ Re =  0.1000E+07
+
+.OPERv   c>  
+.OPERv   c>  
+ Xtr/c     =  1.0000    top    side
+ Xtr/c     =  1.0000    bottom side
+ NcritT    =    9.00   ( 0.070 % turb. level )
+ NcritB    =    9.00   ( 0.070 % turb. level )
+ Vacc      =  0.0100
+ WakeL/c   =   1.000
+
+ Klag  =  5.6000     Uxwt  =    1.00       Kdl =  0.9000
+ A     =  6.7000     B     =  0.7500       KCt = 0.01485
+ CtiniK=  1.8000     CtiniX=  3.3000
+
+..VPAR   c>  
+..VPAR   c>  
+.OPERv   c>  
+.OPERv   c>  
+ Polar  1 newly created for accumulation
+ Airfoil archived with polar: GOE 451 AIRFOIL                                 
+
+Enter  polar save filename  OR  <return> for no file   s>  
+ New polar save file available
+
+Enter  polar dump filename  OR  <return> for no file   s>  
+ Polar dump file will NOT be written
+
+ Polar accumulation enabled
+
+.OPERva   c>   Calculating unit vorticity distributions ...
+ Calculating wake trajectory ...
+ Calculating source influence matrix ...
+
+ Solving BL system ...
+
+ Initializing BL ...
+    side            1  ...
+ MRCHUE: Convergence failed at   3  side 1    Res =  0.2418E+01
+ MRCHUE: Inverse mode at  43     Hk =   3.800
+ MRCHUE: Inverse mode at  44     Hk =   4.093
+ MRCHUE: Inverse mode at  45     Hk =   4.386
+ MRCHUE: Inverse mode at  46     Hk =   4.678
+ MRCHUE: Inverse mode at  47     Hk =   4.969
+ MRCHUE: Inverse mode at  48     Hk =   5.260
+
+Program received signal SIGFPE: Floating-point exception - erroneous arithmetic operation.
+
+Backtrace for this error:
+#0  0x7f13fd423e59 in ???
+#1  0x7f13fd422e75 in ???
+#2  0x7f13fd04532f in ???
+	at ./signal/../sysdeps/unix/sysv/linux/x86_64/libc_sigaction.c:0
+#3  0x7f13fd3275d5 in __GI___feraiseexcept
+	at ../sysdeps/x86_64/fpu/fraiseexcpt.c:36
+#4  0x7f13fd32a259 in __log10
+	at ./math/w_log10_compat.c:39
+#5  0x5ff0b54d9997 in ???
+#6  0x5ff0b54d9e2b in ???
+#7  0x5ff0b54ddf99 in ???
+#8  0x5ff0b54d1aa6 in ???
+#9  0x5ff0b54d3c9c in ???
+#10  0x5ff0b549c67a in ???
+#11  0x5ff0b54a0a77 in ???
+#12  0x5ff0b548c406 in ???
+#13  0x5ff0b5482758 in ???
+#14  0x7f13fd02a1c9 in __libc_start_call_main
+	at ../sysdeps/nptl/libc_start_call_main.h:58
+#15  0x7f13fd02a28a in __libc_start_main_impl
+	at ../csu/libc-start.c:360
+#16  0x5ff0b5482784 in ???
+#17  0xffffffffffffffff in ???
+timeout: the monitored command dumped core

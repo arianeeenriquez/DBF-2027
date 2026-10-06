@@ -16,7 +16,7 @@ class variables:
 		self.AR = self.opti.variable(init_guess = 3, lower_bound = 2, upper_bound = 15)
 		# self.AR = (5.79 * units.foot) ** 2 / self.S
 		self.taper = 1
-		self.airfoil = asb.Airfoil("sd7032")
+		self.airfoil = asb.Airfoil("s1221")
 
 		self.dihedral = 0 #degrees
 		self.washout = 0 #degrees
@@ -39,7 +39,7 @@ class variables:
 		self.missions = ("M2", "M3")
 		self.avl_mass = {mission: asb.MassProperties(mass=0) for mission in self.missions} #running totals for AVL mass file export, per mission
 		self.total_mass = 0
-		self.M2_max = 0.03547310927839548
+		self.M2_max = 0.06012786570522155
 		self.M3_max = 28.16352056325056
 
 		self.ratio_container_sensor = 0.5

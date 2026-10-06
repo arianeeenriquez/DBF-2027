@@ -1,0 +1,14 @@
+  
+       XFOIL         Version 6.99
+  
+ Calculated polar for: GOE 5K AIRFOIL                                  
+  
+ 1 1 Reynolds number fixed          Mach number fixed         
+  
+ xtrf =   1.000 (top)        1.000 (bottom)  
+ Mach =   0.000     Re =     0.500 e 6     Ncrit =   9.000  9.000
+  
+   alpha    CL        CD       CDp       CM     Top_Xtr  Bot_Xtr  Top_Itr  Bot_Itr
+  ------ -------- --------- --------- -------- -------- -------- -------- --------
+   0.000   0.1245   0.00628   0.00143  -0.0357   0.9859   1.0000   3.0134 160.0000
+   1.000   0.2831   0.00598   0.00134  -0.0466   0.9681   1.0000   4.8041 160.0000

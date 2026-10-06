@@ -1,0 +1,14 @@
+  
+       XFOIL         Version 6.99
+  
+ Calculated polar for: NASA SC(2)-0402 AIRFOIL                         
+  
+ 1 1 Reynolds number fixed          Mach number fixed         
+  
+ xtrf =   1.000 (top)        1.000 (bottom)  
+ Mach =   0.000     Re =     1.000 e 6     Ncrit =   9.000  9.000
+  
+   alpha    CL        CD       CDp       CM     Top_Xtr  Bot_Xtr  Top_Itr  Bot_Itr
+  ------ -------- --------- --------- -------- -------- -------- -------- --------
+  -1.000   0.0352   0.00396  -0.00055  -0.0344   1.0000   0.6445   1.0000 132.2106
+   0.000   0.1335   0.00620  -0.00036  -0.0319   0.0063   1.0000  78.0565 160.0000

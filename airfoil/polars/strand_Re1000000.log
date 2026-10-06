@@ -1,0 +1,26 @@
+
+Program received signal SIGFPE: Floating-point exception - erroneous arithmetic operation.
+
+Backtrace for this error:
+#0  0x79e13b823e59 in ???
+#1  0x79e13b822e75 in ???
+#2  0x79e13b44532f in ???
+	at ./signal/../sysdeps/unix/sysv/linux/x86_64/libc_sigaction.c:0
+#3  0x79e13b789b20 in __math_invalid
+	at ../sysdeps/ieee754/dbl-64/math_err.c:82
+#4  0x64fe300ed75a in ???
+#5  0x64fe300eefba in ???
+#6  0x64fe300f5f28 in ???
+#7  0x64fe300e8286 in ???
+#8  0x64fe300eac9c in ???
+#9  0x64fe300b367a in ???
+#10  0x64fe300b7a77 in ???
+#11  0x64fe300a3406 in ???
+#12  0x64fe30099758 in ???
+#13  0x79e13b42a1c9 in __libc_start_call_main
+	at ../sysdeps/nptl/libc_start_call_main.h:58
+#14  0x79e13b42a28a in __libc_start_main_impl
+	at ../csu/libc-start.c:360
+#15  0x64fe30099784 in ???
+#16  0xffffffffffffffff in ???
+timeout: the monitored command dumped core

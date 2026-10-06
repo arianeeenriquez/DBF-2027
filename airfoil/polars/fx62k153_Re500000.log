@@ -1,0 +1,156 @@
+
+ ===================================================
+  XFOIL Version 6.99
+  Copyright (C) 2000   Mark Drela, Harold Youngren
+
+  This software comes with ABSOLUTELY NO WARRANTY,
+    subject to the GNU General Public License.
+
+  Caveat computor
+ ===================================================
+
+ File  xfoil.def  not found
+
+   QUIT    Exit program
+
+  .OPER    Direct operating point(s)
+  .MDES    Complex mapping design routine
+  .QDES    Surface speed design routine
+  .GDES    Geometry design routine
+
+   SAVE f  Write airfoil to labeled coordinate file
+   PSAV f  Write airfoil to plain coordinate file
+   ISAV f  Write airfoil to ISES coordinate file
+   MSAV f  Write airfoil to MSES coordinate file
+   REVE    Reverse written-airfoil node ordering
+   DELI i  Change written-airfoil file delimiters
+
+   LOAD f  Read buffer airfoil from coordinate file
+   NACA i  Set NACA 4,5-digit airfoil and buffer airfoil
+   INTE    Set buffer airfoil by interpolating two airfoils
+   NORM    Buffer airfoil normalization toggle
+   HALF    Halve the number of points in buffer airfoil
+   XYCM rr Change CM reference location, currently  0.25000 0.00000
+
+   BEND    Display structural properties of current airfoil
+
+   PCOP    Set current-airfoil panel nodes directly from buffer airfoil points
+   PANE    Set current-airfoil panel nodes ( 160 ) based on curvature
+  .PPAR    Show/change paneling
+
+  .PLOP    Plotting options
+
+   WDEF f  Write  current-settings file
+   RDEF f  Reread current-settings file
+   NAME s  Specify new airfoil name
+   NINC    Increment name version number
+
+   Z       Zoom    | (available in all menus)
+   U       Unzoom  | 
+
+ XFOIL   c>  
+ XFOIL   c>  
+ Labeled airfoil file.  Name:  FX 62-K-153/20 AIRFOIL                          
+
+ Number of input coordinate points:  97
+ Counterclockwise ordering
+ Max thickness =     0.152738  at x =   0.403
+ Max camber    =     0.040081  at x =   0.630
+
+  LE  x,y  =  -0.00036   0.00195  |   Chord =   1.00036
+  TE  x,y  =   1.00000   0.00000  |
+
+ Current airfoil nodes set from buffer airfoil nodes (  97 )
+
+ XFOIL   c>  
+ Sharp trailing edge
+
+ Paneling parameters used...
+   Number of panel nodes       160
+   Panel bunching parameter    1.000
+   TE/LE panel density ratio   0.150
+   Refined-area/LE panel density ratio    0.200
+   Top    side refined area x/c limits  1.000 1.000
+   Bottom side refined area x/c limits  1.000 1.000
+
+ XFOIL   c>  
+.OPERi   c>  
+ M  =    0.0000
+ Re =  0.5000E+06
+
+.OPERv   c>  
+.OPERv   c>  
+ Xtr/c     =  1.0000    top    side
+ Xtr/c     =  1.0000    bottom side
+ NcritT    =    9.00   ( 0.070 % turb. level )
+ NcritB    =    9.00   ( 0.070 % turb. level )
+ Vacc      =  0.0100
+ WakeL/c   =   1.000
+
+ Klag  =  5.6000     Uxwt  =    1.00       Kdl =  0.9000
+ A     =  6.7000     B     =  0.7500       KCt = 0.01485
+ CtiniK=  1.8000     CtiniX=  3.3000
+
+..VPAR   c>  
+..VPAR   c>  
+.OPERv   c>  
+.OPERv   c>  
+ Polar  1 newly created for accumulation
+ Airfoil archived with polar: FX 62-K-153/20 AIRFOIL                          
+
+Enter  polar save filename  OR  <return> for no file   s>  
+ New polar save file available
+
+Enter  polar dump filename  OR  <return> for no file   s>  
+ Polar dump file will NOT be written
+
+ Polar accumulation enabled
+
+.OPERva   c>   Calculating unit vorticity distributions ...
+ Calculating wake trajectory ...
+ Calculating source influence matrix ...
+
+ Solving BL system ...
+
+ Initializing BL ...
+    side            1  ...
+ MRCHUE: Inverse mode at  59     Hk =   4.001
+ MRCHUE: Inverse mode at  60     Hk =   4.611
+ MRCHUE: Inverse mode at  61     Hk =   5.212
+ MRCHUE: Inverse mode at  62     Hk =   5.808
+ MRCHUE: Inverse mode at  63     Hk =   6.399
+ MRCHUE: Inverse mode at  64     Hk =   6.990
+ MRCHUE: Inverse mode at  65     Hk =   7.583
+ MRCHUE: Inverse mode at  66     Hk =   8.177
+ MRCHUE: Inverse mode at  67     Hk =   8.771
+ MRCHUE: Inverse mode at  68     Hk =   7.115
+ MRCHUE: Inverse mode at  69     Hk =   4.999
+ MRCHUE: Inverse mode at  70     Hk =   3.613
+ MRCHUE: Inverse mode at  71     Hk =   2.597
+ MRCHUE: Convergence failed at  81  side 1    Res =  0.3071E+01
+
+Program received signal SIGFPE: Floating-point exception - erroneous arithmetic operation.
+
+Backtrace for this error:
+#0  0x735d8e623e59 in ???
+#1  0x735d8e622e75 in ???
+#2  0x735d8e24532f in ???
+	at ./signal/../sysdeps/unix/sysv/linux/x86_64/libc_sigaction.c:0
+#3  0x735d8ea0ab20 in __math_invalid
+	at ../sysdeps/ieee754/dbl-64/math_err.c:82
+#4  0x5ce6e680875a in ???
+#5  0x5ce6e6809fba in ???
+#6  0x5ce6e6810f28 in ???
+#7  0x5ce6e6803286 in ???
+#8  0x5ce6e6805c9c in ???
+#9  0x5ce6e67ce67a in ???
+#10  0x5ce6e67d2a77 in ???
+#11  0x5ce6e67be406 in ???
+#12  0x5ce6e67b4758 in ???
+#13  0x735d8e22a1c9 in __libc_start_call_main
+	at ../sysdeps/nptl/libc_start_call_main.h:58
+#14  0x735d8e22a28a in __libc_start_main_impl
+	at ../csu/libc-start.c:360
+#15  0x5ce6e67b4784 in ???
+#16  0xffffffffffffffff in ???
+timeout: the monitored command dumped core

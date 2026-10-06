@@ -1,0 +1,15 @@
+  
+       XFOIL         Version 6.99
+  
+ Calculated polar for: GOE 275 (DAIMLER VI) AIRFOIL                    
+  
+ 1 1 Reynolds number fixed          Mach number fixed         
+  
+ xtrf =   1.000 (top)        1.000 (bottom)  
+ Mach =   0.000     Re =     1.000 e 6     Ncrit =   9.000  9.000
+  
+   alpha    CL        CD       CDp       CM     Top_Xtr  Bot_Xtr  Top_Itr  Bot_Itr
+  ------ -------- --------- --------- -------- -------- -------- -------- --------
+  -3.000   0.2360   0.00933   0.01127  -0.1050   0.7984   0.0266  15.7929  94.9508
+  -2.000   0.3274   0.00606   0.00661  -0.1023   0.6766   0.0279  23.6813  95.1947
+  -1.000   0.4249   0.00580   0.00389  -0.0991   0.5595   0.0326  31.1113  95.9785

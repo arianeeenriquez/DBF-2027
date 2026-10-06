@@ -1,0 +1,14 @@
+  
+       XFOIL         Version 6.99
+  
+ Calculated polar for: AH-7-47-6 AIRFOIL                               
+  
+ 1 1 Reynolds number fixed          Mach number fixed         
+  
+ xtrf =   1.000 (top)        1.000 (bottom)  
+ Mach =   0.000     Re =     1.000 e 6     Ncrit =   9.000  9.000
+  
+   alpha    CL        CD       CDp       CM     Top_Xtr  Bot_Xtr  Top_Itr  Bot_Itr
+  ------ -------- --------- --------- -------- -------- -------- -------- --------
+  -2.000   0.6403   0.01066   0.00495  -0.2010   0.8955   0.0306  10.9040  92.1381
+  -1.000   0.7586   0.00885   0.00292  -0.2028   0.8615   0.0353  13.1599  92.7852
