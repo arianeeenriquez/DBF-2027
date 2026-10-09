@@ -409,7 +409,7 @@ class variables:
 			+ 0.05 ) #subject to mu and other stuff, look at 2025 design doc
 		self.opti.subject_to(self.tw_to < 0.9)
 		self.stall_speed = 15
-		self.stall_CL = 2
+		self.stall_CL = 1.5
 		self.opti.subject_to(1/2 * self.stall_speed ** 2 * self.rho * self.S * self.stall_CL > self.mass["M2"] * self.g)
 
 	def stability_constraints(self):
@@ -850,7 +850,7 @@ class variables:
 		self.max_load_per_length_M2 = self.N_max * self.g * self.mass["M2"] / self.proj_span
 
 		self.deflection_M2 = self.max_load_per_length_M2 * (self.b / 2)**4 / (8 * self.carbon_fiber_youngs_modulus * self.spar_I)
-		self.deflection_max = 0.05
+		self.deflection_max = self.b /2 * 0.08  #8\% of  half span
 		self.opti.subject_to(self.deflection_M2 < self.deflection_max)
 
 #print statements

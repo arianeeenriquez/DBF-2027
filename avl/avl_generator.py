@@ -23,9 +23,9 @@ import math
 
 WING_SPAN = 1.76784          # full span [m]
 WING_ROOT_CHORD = 0.48      # root chord [m]
-WING_TAPER = 1.0             # tip chord / root chord
+WING_TAPER = 1       # tip chord / root chord
 WING_SWEEP = 0.0             # quarter-chord sweep [deg]
-WING_DIHEDRAL = 0.0          # dihedral [deg]
+WING_DIHEDRAL = 0         # dihedral [deg]
 WING_INCIDENCE = 0.0         # incidence [deg]
 
 WING_AIRFOIL = "sd7032.dat"
@@ -47,15 +47,15 @@ AILERON_HINGE = 0.70
 # Horizontal tail
 # -------------------------------------------------------------------------
 
-HT_SPAN = 0.50286508         # full span [m]
-HT_ROOT_CHORD = 0.16020765
+HT_SPAN = 0.6         # full span [m]
+HT_ROOT_CHORD = 0.25
 HT_TAPER = 1.0
 HT_SWEEP = 0.0
 HT_DIHEDRAL = 0.0
 HT_INCIDENCE = -5.0
 
-HT_XLE = 1.0
-HT_ZLE = 0.25143254
+HT_XLE = 1.2
+HT_ZLE = 0
 
 HT_AIRFOIL = "naca0012.dat"
 
@@ -71,13 +71,13 @@ ELEVATOR_HINGE = 0.70
 # Vertical tail
 # -------------------------------------------------------------------------
 
-VT_HEIGHT = 0.25143254       # vertical span [m]
-VT_ROOT_CHORD = 0.16020765
-VT_TAPER = 1.0
-VT_SWEEP = 0.0
+VT_HEIGHT = 0.4      # vertical span [m]
+VT_ROOT_CHORD = 0.25
+VT_TAPER = 0.8
+VT_SWEEP = 30
 VT_INCIDENCE = 0.0
 
-VT_XLE = 1.0
+VT_XLE = 1.2
 VT_AIRFOIL = "naca0012.dat"
 
 VT_NCHORD = 12
@@ -188,13 +188,7 @@ def wing_section(
     )
 
     # Leading edge x
-    x = leading_edge_x(
-        y,
-        root_chord,
-        taper,
-        span,
-        sweep_deg,
-    )
+    x = root_chord / 2 * (y / half_span) * (1-taper)
 
     # Dihedral
     z = abs(y) * math.tan(

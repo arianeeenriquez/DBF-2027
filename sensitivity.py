@@ -1,4 +1,4 @@
-from opt import variables
+from prototype0_opt import variables
 import casadi as ca
 import numpy 
 import matplotlib.pyplot as plt
@@ -6,27 +6,37 @@ import matplotlib.pyplot as plt
 
 ca.GlobalOptions.setNumpyMode(-1)
 S_arr= []
+wl2_arr = []
+wl3_arr = []
 score_arr =[]
 m2_arr = []
 m3_arr = []
-for S in numpy.linspace(1, 5, 30):
-	
+interf_sweep = numpy.linspace(1, 4, 5)
+# for interf in interf_sweep:
+# 	wl2_arr.append([])
+# 	wl3_arr.append([])
+# 	m2_arr.append([])
+# 	m3_arr.append([])
+for S in numpy.linspace(0.5, 1.0, 20):
 	v = variables()
-	v.AR = S
-	s_label = "Aspect Ratio"
-	print(S)
+	v.S = S
+	# v.interference_factor  = interf
+	s_label = "Wing area"
+	# print(S)
 	try:
 		sol=v.optimize(verbose=False)
 
 		# Only extract values if solve succeeded
 		S_arr.append(S)
+		# wl2_arr[-1].append(sol.value(v.mass["M2"])/S)
+		# wl3_arr[-1].append(sol.value(v.mass["M3"])/S)
+		
 		# print(S)
 		# print(sol.value(v.both_mission_score))
 
 		score_arr.append(sol.value(v.both_mission_score))
 		m2_arr.append(sol.value(v.M2_score))
 		m3_arr.append(sol.value(v.M3_score))
-
 	except RuntimeError:
 		# Solve failed -> don't extract anything
 		continue
@@ -49,7 +59,7 @@ def pct_diff_from_mid(arr, mid_idx):
     mid_val = arr[mid_idx]
     return (arr - mid_val) / mid_val * 100
 
-score_pct = pct_diff_from_mid(score_arr, mid_idx)
+# score_pct = pct_diff_from_mid(score_arr, mid_idx)
 m2_pct = pct_diff_from_mid(m2_arr, mid_idx)
 m3_pct = pct_diff_from_mid(m3_arr, mid_idx)
 
@@ -59,13 +69,19 @@ m3_pct = pct_diff_from_mid(m3_arr, mid_idx)
 #     for S, p in zip(S_arr, pct):
 #         print(f"  S={S:.4g}: {p:+.2f}%")
 
-plt.plot(S_arr, score_pct, label="both")
-plt.plot(S_arr, m2_pct, label="m2")
-plt.plot(S_arr, m3_pct, label="m3")
+# plt.plot(S_arr, score_pct, label="both")
+# for ind in range(len(m2_arr)):
+# 	plt.plot(wl2_arr[ind], m2_arr[ind],color="red", label=f"M2 {interf_sweep[ind]=}")
+# 	plt.plot(wl3_arr[ind], m3_arr[ind], color="blue",label=f"M2 {interf_sweep[ind]=}")
+plt.plot(S_arr, m2_pct, label="M2 score")
+plt.plot(S_arr, m3_pct, label="M3 score")
 plt.axhline(0, color='k', linewidth=0.5, linestyle='--')
 plt.xlabel(s_label)
 plt.ylabel("% difference from midpoint")
-plt.title(f"% difference score vs {s_label}")
+# plt.xlabel("Wing loading")
+plt.ylabel("% difference in Velocity")
+plt.title(f"% difference in score vs {s_label}")
+# plt.title(f"Optimal Velocity per mission vs Sensor Mass")
 plt.legend()
 plt.show()
 
