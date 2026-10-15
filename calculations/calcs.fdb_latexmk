@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1791515671.5002 "calcs.tex" "calcs.pdf" "calcs" 1791515671.77124 0
+["pdflatex"] 1791612311.5936 "calcs.tex" "calcs.pdf" "calcs" 1791612311.86335 0
   "/etc/texmf/web2c/texmf.cnf" 1779818109.6769 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -30,6 +30,7 @@
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb" 1248133631 32362 179c33bbf43f19adbb3825bb4e36e57a ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1248133631 32762 224316ccc9ad3ca0423a14971cfa7fc1 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
+  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
   "/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty" 1644112042 7237 bdd120a32c8fdb4b433cf9ca2e7cd98a ""
   "/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty" 1572645307 1057 525c2192b5febbd8c1f662c9468335bb ""
   "/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty" 1359763108 5949 3f3fd50a8cc94c3d4cbf4fc66cd3df1c ""
@@ -50,8 +51,8 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1779818118.10104 128028 f533b797fba58d231669ea19e894e23e ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1779818149 6800793 cafcdffcf6d6c1b8fd781c847a0e152c ""
-  "calcs.aux" 1791515671.72374 165 6fb78bf2c3660962a8cabb2917edf40d "pdflatex"
-  "calcs.tex" 1791515671.32353 1494 db736cd4ab5bdc68102c21b21ff34d54 ""
+  "calcs.aux" 1791612311.81041 165 6fb78bf2c3660962a8cabb2917edf40d "pdflatex"
+  "calcs.tex" 1791612311.40869 1858 a33e310cb77a1327fd869e37fda6e567 ""
   (generated)
   "calcs.aux"
   "calcs.log"

@@ -17,11 +17,12 @@ interf_sweep = numpy.linspace(1, 4, 5)
 # 	wl3_arr.append([])
 # 	m2_arr.append([])
 # 	m3_arr.append([])
-for S in numpy.linspace(0.5, 1.0, 20):
+for S in numpy.linspace(2.0, 10.0, 40):
 	v = variables()
-	v.S = S
+	v.mass_sensor = S
+	v.mission_no = 3
 	# v.interference_factor  = interf
-	s_label = "Wing area"
+	s_label = "Sensor mass"
 	# print(S)
 	try:
 		sol=v.optimize(verbose=False)
@@ -79,7 +80,7 @@ plt.axhline(0, color='k', linewidth=0.5, linestyle='--')
 plt.xlabel(s_label)
 plt.ylabel("% difference from midpoint")
 # plt.xlabel("Wing loading")
-plt.ylabel("% difference in Velocity")
+plt.ylabel("% difference in Score")
 plt.title(f"% difference in score vs {s_label}")
 # plt.title(f"Optimal Velocity per mission vs Sensor Mass")
 plt.legend()

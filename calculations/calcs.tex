@@ -38,9 +38,31 @@ I feel like I don't believe that the servo can carry this much weight up.
 \end{align}
 
 \[
-	\frac{W}{S} = \frac{1}{2}C_{\text{Lmax}}\rho v_{\text{stall}}^2 \rightarrow \frac{W}{S} < 206.7 N/m^2
+	\frac{W}{S} = \frac{1}{2}C_{\text{Lmax}}\rho v_{\text{stall}}^2 \rightarrow  W \propto S
+\]
+\[
+	\frac{1}{t} = v < v_{\text{safety limit}}
+\]
+\[
+	P = D v \Rightarrow v \propto S ^{-1/3}
+\]
+\[
+	\text{Score} \propto W v = S^{-2/3}
 \]
 
+\[
+	\text{Score} = N_\text{laps} \times W_\text{sensor}
+\]
+\[
+	N_\text{laps}\propto v t
+\]
+
+\[
+	 t \propto \frac{E_{\text{batt}}}{Dv}
+\]
+\[
+	 \text{Score} \propto v t W_\text{sensor} \propto \frac{E_{\text{batt}} W_\text{sensor} }{D} 
+\]
 Climb power:
 \[
 	P = Tv = (D + W\sin(\alpha)) v 

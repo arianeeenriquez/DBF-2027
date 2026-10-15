@@ -1,0 +1,312 @@
+\documentclass[10pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{etoolbox}
+
+% Code-style variable names: underscores and brackets just work inside \code{...}
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+% Group header row spanning a table (n = number of columns)
+\newcommand{\grouprow}[2]{\multicolumn{#1}{@{}l}{\textit{#2}} \\}
+
+
+% ---------------------------------------------------------------------
+% KEYED TABLE NOTES
+%   \tnote{key}          -> superscript number, auto-assigned in order of first use
+%                           (reuse the same key anywhere to get the same number)
+%   \notetext{key}{...}  -> the justification text; define it anywhere, any order
+%   \printnotes          -> prints all notes in number order (undefined ones show TODO)
+% Keys: letters/digits/hyphens only (no underscores).
+% ---------------------------------------------------------------------
+\makeatletter
+\newcounter{tnote}
+\gdef\tnote@list{}
+\newcommand{\tnote}[1]{%
+  \@ifundefined{tnote@num@#1}{%
+    \stepcounter{tnote}%
+    \expandafter\xdef\csname tnote@num@#1\endcsname{\arabic{tnote}}%
+    \g@addto@macro\tnote@list{\tnote@item{#1}}%
+  }{}%
+  \textsuperscript{\csname tnote@num@#1\endcsname}%
+}
+\newcommand{\notetext}[2]{\expandafter\gdef\csname tnote@txt@#1\endcsname{#2}}
+\newcommand{\printnotes}{%
+  \begingroup\small
+  \def\tnote@item##1{\par\noindent\hangindent=1.5em
+    \textsuperscript{\csname tnote@num@##1\endcsname}\ \code{##1}: %
+    \@ifundefined{tnote@txt@##1}{\textbf{[TODO: add note]}}{\csname tnote@txt@##1\endcsname}}%
+  \tnote@list\par
+  \endgroup}
+\makeatother
+\renewcommand{\arraystretch}{1.25}
+\AtBeginEnvironment{longtable}{\footnotesize}
+
+\begin{document}
+
+% =====================================================================
+% TABLE 1: OPTIMIZATION VARIABLES
+% =====================================================================
+\begin{longtable}{@{}p{0.19\textwidth} c c c l p{0.20\textwidth}@{}}
+\caption{Optimization variables (\code{opti.variable}) with bounds.}
+\label{tab:opti-vars}\\
+\toprule
+\textbf{Variable} & \textbf{Init.\ guess} & \textbf{Lower} & \textbf{Upper} & \textbf{Units} & \textbf{Description} \\
+\midrule
+\endfirsthead
+
+\multicolumn{6}{@{}l}{\textit{Table \thetable\ (continued)}} \\
+\toprule
+\textbf{Variable} & \textbf{Init.\ guess} & \textbf{Lower} & \textbf{Upper} & \textbf{Units} & \textbf{Description} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{6}{r@{}}{\textit{continued on next page}} \\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+\grouprow{6}{Wing}
+\code{S}   & 0.2 & 0.01 & 1  & m$^2$ &Reasonable Bounds \\
+\code{AR}  & 3   & 2    & 15 & --    &Reasonable Bounds \\
+\addlinespace
+\grouprow{6}{Tail - goal is for preliminary mass model, not stability. Stability will be checked later with AVL}
+\code{AR_v}   & 2    & 1     & 5   & --    & Reasonable - will check stability with AVL\\
+\code{AR_h}   & 4    & 3     & 5   & --    & Reasonable - will check stability with AVL \\
+\code{S_v}    & 0.01 & 0.001 & 0.1 & m$^2$ & Reasonable - will check stability with AVL\\
+\code{S_h}    & 0.01 & 0.001 & 0.1 & m$^2$ & Hitting the upper bound\\
+\code{x_tail} & 1    & 0.7   & 1.2 & m     & Hitting the upper bound\\
+\addlinespace
+\grouprow{6}{Sensor and mass}
+\code{payload_mass_frac} & 10  & 0 & 5 & -- & Payload mass / Plane empty mass - reasonable bounds\\
+\code{mass_sensor}       & 1.5 & 0 & 3 & kg & ?? \\
+\code{mass_container}    & 1   & $0.5\,\code{mass_sensor}$ & none & kg & the box weighs nontrivially, though this is a guess\\
+\code{sensor_height}     & 0.12 & 0.127 (3 in) & 0.254 (10 in) & m & a guess - reasonable fineness ratio - check hoerner\\
+\code{sensor_width}      & 0.1  & 0.0762 (3 in) & 0.1524 (6 in) & m & a guess \\
+\code{sensor_length}     & 0.3048 (12 in) & 0.254 (10 in) & 0.3556 (14 in) & m & more guesswork! \\
+\addlinespace
+\grouprow{6}{Component locations - These can mostly go whereever they want, important for the Aerosandbox native aero and stability checks, not super important for checking performance.}
+\code{x_sensor}          & 0    & $-0.1$ & 0.2 & m & near the CG \\
+\code{x_motor}           & $-0.3$ & $-0.4$ & $-0.2$ & m & can't go farther than a certain point - set it so it would stay in front. Kept there for future weight balancing CG purposes. \\
+\code{x_electronics}     & $-0.1$ & $-0.5$ & $0.8\,c_r$ & m & \\
+\code{x_battery}         & $-0.1$ & $-0.5$ & $0.8\,c_r$ & m & \\
+\code{x_battery_avionics} & $-0.2$ & $-0.5$ & $c_r$ & m & \\
+\addlinespace
+\grouprow{6}{Operating point (one per mission, M2 and M3)}
+\code{velocity[M2]}, \code{velocity[M3]} & 20 & 0 & -- & m/s & \\
+\code{alpha[M2]}, \code{alpha[M3]}       & 0  & $-10$ & 13 & deg & Not that important for initial optimization sizing.\\
+\code{M3_duration}                       & 300 & 0 & 300 & s & Max 5 mins - rules. \\
+\end{longtable}
+
+% =====================================================================
+% TABLE 2: SET (FIXED) VARIABLES
+% =====================================================================
+\begin{longtable}{@{}p{0.29\textwidth} p{0.14\textwidth} p{0.10\textwidth} p{0.33\textwidth}@{}}
+\caption{Set (fixed) variables and constants.}
+\label{tab:set-vars}\\
+\toprule
+\textbf{Variable} & \textbf{Value} & \textbf{Units} & \textbf{Description} \\
+\midrule
+\endfirsthead
+
+\multicolumn{4}{@{}l}{\textit{Table \thetable\ (continued)}} \\
+\toprule
+\textbf{Variable} & \textbf{Value} & \textbf{Units} & \textbf{Description} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{4}{r@{}}{\textit{continued on next page}} \\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+\grouprow{4}{Configuration}
+\code{given_airfoil}   & False & -- & For the optimizer\\
+\code{mission_no}      & 0     & -- & Mission dependent optimization\\
+\code{missions}        & (M2, M3) & -- & Optimizer's internal bookkeeping of the missions. \\
+\addlinespace
+\grouprow{4}{Wing and tail design}
+\code{taper}           & 1        & --  & Unnecessary to taper - no significant efficiencies gained. \\
+\code{airfoil}         & sd7032   & --  &  Best cd0 from CL 0.3-0.6.\\
+\code{airfoil_tail}\tnote{airfoil_tail}    & naca0012 & --  &  Classic airfoil, easy to choose, thick enough for structural stability. \\
+\code{dihedral}        & 0        & deg &  0 for ease of building, good enough tail should be stable enough to not increase complexity.\\
+\code{washout}         & 0        & deg & Unnecessary because rectangle wing won't stall at the tip. \\
+\code{decalage}        & $-5$     & deg & suboptimal\\
+\code{flap hinge_point}     & 0.6  & --  & Need to run AVL to ensure authority. \\
+\code{aileron hinge_point}  & 0.7  & --  & Need to run AVL to ensure authority. \\
+\code{elevator hinge_point} & 0.70 & --  & Need to run AVL to ensure authority. \\
+\code{rudder hinge_point}   & 0.75 & --  & Need to run AVL to ensure authority. \\
+\addlinespace
+\grouprow{4}{Aerodynamics and performance}
+\code{rho}\tnote{rho}            & 1.10   & kg/m$^3$ & In notes\\
+\code{nu}\tnote{nu}                   & $1.506\times10^{-5}$ & m$^2$/s & In notes\\
+\code{g}                    & 9.81   & m/s$^2$ & Constant\\
+\code{N_max}\tnote{N_max}               & 10     & -- & needs justification \\
+\code{CL_max}\tnote{CL_max}               & 1.4    & -- & why are they different \\
+\code{stall_CL}\tnote{stall_CL}             & 1.5    & -- & justification\\
+\code{stall_speed}\tnote{stall_speed}  & 15     & m/s & justification\\
+\code{interference_factor}\tnote{interference_factor}  & 1.5    & -- & Hoerner - check  \\
+\code{CDp}                  & 0.02   & -- & SD7032 CD0 - should check\\
+\code{e}\tnote{e}                    & 0.9    & -- & check avl \\
+\code{CD_lg}\tnote{CD_LG}                & 0.25   & -- & find equation\\
+\code{C_f}\tnote{CF}                  & 0.004  & -- & find equation\\
+\code{S_g}\tnote{S_g}                  & 91.44 (300 ft) & m & why choose this distance\\
+\code{area_chord_tail} \tnote{area_chord_tail}     & 0.0822   & -- & Do the math (asked chat)\\
+\addlinespace
+\grouprow{4}{Mission}
+\code{lap_dist}  & 1000  & m & relatively generous estimate assuming cruise only\\
+\code{M2_max}    & 0.065 & -- & pmo\\
+\code{M3_max}    & 35    & -- & pmo\\
+\addlinespace
+\grouprow{4}{Propulsion}
+\code{battery_power}  & $100\times3600$ & J & rules, max battery power\\
+\code{voltage}        & 25  & V & 8s - change to 29.6/figure out battery sag\\
+\code{max_amperage}   & 100 & A &  rules, max amperage\\
+\code{safety_factor}\tnote{safety factor}  & 1.5 & -- & Arbitrary\\
+\addlinespace
+\grouprow{4}{Inline literals in the code (suggested names)}
+\code{eta_prop}\tnote{eta_prop}           & 0.7  & -- &  arbitrary/needs testing\\
+\code{empty_mass_factor}  & 1.3  & -- & justify \\
+\code{deflection_frac}    & 0.08 & -- & deflection percentage, justify\\
+\addlinespace
+\grouprow{4}{Sensor}
+\code{ratio_container_sensor} & 0.5 & -- & sigh - random numbers\\
+\addlinespace
+\grouprow{4}{Component masses}
+\code{mass_electronics}      & 0.1915 & kg & check the numbers \\
+\code{mass_battery_avionics} & 0.07   & kg & check the numbers\\
+\code{mass_propeller}        & 0.56   & kg & prop and motor \\
+\code{mass_tail_servo}       & 0.07   & kg & check the numbers\\
+\code{mass_wing_servo}       & 0.14   & kg & check the numbers\\
+\code{mass_landing_gear}     & 0.2    & kg & check the numbers\\
+\code{mass_misc}             & 2.0    & kg & check the numbers\\
+\code{mass_spar_misc}        & 0.009  & kg & check the numbers\\
+\addlinespace
+\grouprow{4}{Spar geometry}
+\code{spar_cap_thickness} & 0.002 & m & ?? LOL \\
+\code{spar_wood_width}    & 0.009525 (3/8 in) & m & Existing material\\
+\addlinespace
+\grouprow{4}{Carbon fiber}
+\code{carbon_fiber_density}           & 1750 & kg/m$^3$ & \\
+\code{carbon_fiber_yield_strength}    & $600\times10^{6}$ & Pa & \\
+\code{carbon_fiber_youngs_modulus}    & $230\times10^{9}$ & Pa & \\
+\code{carbon_fiber_shear_modulus}     & $50\times10^{9}$  & Pa & \\
+\code{carbon_fiber_layup_epoxy_factor} & 2.2 & -- & \\
+\code{carbon_fiber_areal_density}     & 0.2 & kg/m$^2$ & \\
+\addlinespace
+\grouprow{4}{Fiberglass}
+\code{fiberglass_density}           & 2600 & kg/m$^3$ & \\
+\code{fiberglass_areal_density}     & 0.017 & kg/m$^2$ & \\
+\code{fiberglass_youngs_modulus}    & $70\times10^{9}$ & Pa & \\
+\code{fiberglass_shear_modulus}     & $30\times10^{9}$ & Pa & \\
+\code{fiberglass_layup_epoxy_factor} & 2.2 & -- & \\
+\code{fiberglass_thickness}         & 0.0001 & m & \\
+\addlinespace
+\grouprow{4}{Kevlar}
+\code{kevlar_density}           & 1400 & kg/m$^3$ & \\
+\code{kevlar_layup_epoxy_factor} & 1 & -- & \\
+\code{kevlar_youngs_modulus}    & $100\times10^{9}$ & Pa & \\
+\code{kevlar_yield_strength}    & $3\times10^{9}$ & Pa & \\
+\code{kevlar_shear_modulus}     & $717\times10^{6}$ & Pa & \\
+\addlinespace
+\grouprow{4}{Basswood}
+\code{basswood_density}           & 320 & kg/m$^3$ & \\
+\code{basswood_youngs_modulus}    & $10\times10^{9}$ & Pa & \\
+\code{basswood_shear_modulus}     & $3.8\times10^{9}$ & Pa & \\
+\code{basswood_layup_epoxy_factor} & 1.2 & -- & \\
+\code{basswoord_shear_strength}   & $6.8\times10^{6}$ & Pa & \\
+\addlinespace
+\grouprow{4}{Plywood, balsa, foam, film}
+\code{plywood_density}           & 550 & kg/m$^3$ & \\
+\code{plywood_thickness}         & 0.0025 & m & \\
+\code{balsa_density}             & 160 & kg/m$^3$ & \\
+\code{balsa_youngs_modulus}      & $4\times10^{9}$ & Pa & \\
+\code{balsa_shear_modulus}       & $1.5\times10^{9}$ & Pa & \\
+\code{balsa_layup_epoxy_factor}  & 1.2 & -- & \\
+\code{balsa_shear_strength}      & $2.1\times10^{6}$ & Pa & \\
+\code{foam_density}              & 25 & kg/m$^3$ & \\
+\code{monokote_density}          & 0.06 & kg/m$^2$ & \\
+\end{longtable}
+
+% =====================================================================
+% TABLE 3: CONSTRAINTS
+% =====================================================================
+\begin{longtable}{@{}p{0.36\textwidth} p{0.16\textwidth} p{0.40\textwidth}@{}}
+\caption{Constraints (\code{opti.subject_to}). ``AF'' = the \code{given_airfoil=True} (AeroBuildup/AVL) path; ``no AF'' = the reduced-order path.}
+\label{tab:constraints}\\
+\toprule
+\textbf{Constraint} & \textbf{Applies to} & \textbf{Description} \\
+\midrule
+\endfirsthead
+
+\multicolumn{3}{@{}l}{\textit{Table \thetable\ (continued)}} \\
+\toprule
+\textbf{Constraint} & \textbf{Applies to} & \textbf{Description} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{3}{r@{}}{\textit{continued on next page}} \\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+\grouprow{3}{Geometry}
+$b < 5.95\ \text{ft}$                  & all & slight manufacturing safety margin, but rules. \\
+$c_v = c_h$                            & all & manufacturing ease/not that critical\\
+$x_\text{tail} > c_r$                  & all & makes sure the plane is a plane\\
+$0.3 < V_h < 0.6$                      & all & Tail coefficients\\
+$0.02 < V_v < 0.05$                    & all & Tail coefficients\\
+\addlinespace
+\grouprow{3}{Mass and sensor}
+$m_\text{empty} > 1.3\, m_\text{total}$ & all & ensuring the empty mass > 1.3 times the mass total, though the 1.3 is arbitrary \\
+$m_\text{mission} < 55\ \text{lb}$      & each mission & Rules \\
+$\dfrac{m_\text{sensor} + m_\text{container}}{V_\text{sensor}} < 3000\ \text{kg/m}^3$ & all & can't be denser than steel \\
+\addlinespace
+\grouprow{3}{Aerodynamics}
+$C_L < 0.5$                             & each mission & kind of arbitrary, not hitting against, could remove\\
+$L = m_\text{mission}\, g$              & each mission, AF only & cruise equilibrium\\
+$tw_\text{to} < 0.9$                    & M2 & thrust to weight ratio at take off - should check\\
+$\tfrac{1}{2}\, V_\text{stall}^2\, \rho\, S\, C_{L,\text{stall}} > m_{M2}\, g$ & M2 & stall speed is safe \\
+\addlinespace
+\grouprow{3}{Stability (AF only)}
+$\text{SM} = 0.15$                      & each mission & static margin = 0.15 - classic stability\\
+$0.04 < C_{n\beta,\text{corr}} < 0.1$   & each mission & more stability\\
+$-1.8 < C_{m\alpha,\text{corr}} < -0.8$ & each mission & more stability\\
+\addlinespace
+\grouprow{3}{Propulsion}
+$I_\text{max}\, V > P_\text{mission}$   & each mission & checking power consumption during cruise\\
+$P_\text{mission}\, t_\text{mission} < E_\text{avail}$ & each mission & ensuring each mission has enough power\\
+$t_{M2} < 300\ \text{s}$                & M2 & making sure M2 occurs in under 5 minutes\\
+\addlinespace
+\grouprow{3}{Structures}
+$\delta_{M2} < \delta_\text{max} = 0.08\,(b/2)$ & M2 & 8\% wing tip deflection - needs justifying.\\
+\end{longtable}
+
+% =====================================================================
+% NOTES
+% =====================================================================
+\section*{Notes}
+
+% Write your justifications here, in any order. Example:
+\notetext{rho}{Air density used for all missions. 
+Citation: \url{https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/earth-atmosphere-equation-metric/?utm_source=chatgpt.com}
+Tuscan height above sea level is 800m, T = 9.8K, P = 92.0kPa --> $\rho = 1.1 kg/m^3$
+}
+\notetext{nu}{Calculation for kinematic viscosity:
+Citation: \url{https://www.engineeringtoolbox.com/air-absolute-kinematic-viscosity-d_601.html?vA=22&units=C\#}
+Used 20C
+}
+
+\printnotes
+
+\end{document}

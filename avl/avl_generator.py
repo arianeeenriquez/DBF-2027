@@ -21,7 +21,7 @@ import math
 # Wing
 # -------------------------------------------------------------------------
 
-WING_SPAN = 1.76784          # full span [m]
+WING_SPAN = 1.8      # full span [m]
 WING_ROOT_CHORD = 0.48      # root chord [m]
 WING_TAPER = 1       # tip chord / root chord
 WING_SWEEP = 0.0             # quarter-chord sweep [deg]
@@ -73,8 +73,8 @@ ELEVATOR_HINGE = 0.70
 
 VT_HEIGHT = 0.4      # vertical span [m]
 VT_ROOT_CHORD = 0.25
-VT_TAPER = 0.8
-VT_SWEEP = 30
+VT_TAPER = 1
+VT_SWEEP = 0
 VT_INCIDENCE = 0.0
 
 VT_XLE = 1.2
@@ -85,7 +85,7 @@ VT_NSPAN = 12
 VT_CSPACE = 1
 VT_SSPACE = 1
 
-RUDDER_HINGE = 0.75
+RUDDER_HINGE = 0.70
 
 
 # -------------------------------------------------------------------------
@@ -94,7 +94,7 @@ RUDDER_HINGE = 0.75
 
 SREF = 0.8548320475195411
 CREF = 0.4835460491444603
-BREF = 1.767839999999997
+BREF = 1.8
 
 XREF = 0.0
 YREF = 0.0
@@ -317,7 +317,6 @@ def generate_wing(lines):
         WING_AIRFOIL,
         claf=1.076655270298305,
         control_lines=[
-            f"flap 1 {FLAP_HINGE} 0 0 0 1\n",
             f"aileron 1 {AILERON_HINGE} 0 0 0 -1",
         ],
     )
@@ -509,7 +508,7 @@ def generate_avl():
 
 if __name__ == "__main__":
 
-    output_file = Path("prototype_0.avl")
+    output_file = Path("prototype_0a.avl")
 
     avl_text = generate_avl()
 
