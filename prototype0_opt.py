@@ -696,10 +696,10 @@ class variables:
 		# ---- takeoff assumptions (tune these) ----
 		k_LOF = 1.2             # liftoff speed / stall speed (1.1-1.2 typical)
 		mu = 0.05               # rolling friction (0.03-0.05 pavement, 0.05-0.1 grass)
-		CL_ground = 0.4         # lift coeff while rolling (wing at ground attitude, not CL_max)
+		CL_ground = 0.2       # lift coeff while rolling (wing at ground attitude, not CL_max)
 		prop_diameter = 0.40    # m   <-- replace with your real prop
 		eta_to = 0.6            # overall power -> thrust efficiency
-		thrust_avg_factor = 0.75  # avg thrust over the roll / static thrust (thrust drops with speed)
+		thrust_avg_factor = 0.9 # avg thrust over the roll / static thrust (thrust drops with speed)
 		V_avg_frac = 0.7        # evaluate drag/lift at 70% of V_LOF (standard average-speed trick)
 
 		self.general_power()    # defines max_power; it only sets constants, so calling it early is harmless
@@ -732,6 +732,7 @@ class variables:
 		self.V_LOF = np.sqrt(self.V_LOF_sq)
 		self.S_roll = self.V_LOF_sq / (2 * self.a_to)   # actual ground roll (<= S_g)
 		self.tw_to = self.T_avg / W
+		self.W_S = self.mass["M2"] / self.S
 
 	# ======================================================================
 	# PROPULSION
@@ -745,7 +746,7 @@ class variables:
 		#M3 is a fixed 5 minute window - override per mission as needed
 		self.M2_distance = self.lap_dist["M2"] * 5 # 5 laps
 		self.available_battery = self.battery_power/self.safety_factor_small
-		self.M3_duration = self.opti.variable(init_guess = 300, upper_bound = 300, lower_bound = 0)
+		self.M3_duration = self.opti.variable(init_guess = 100)
 		self.eta = 0.6
 		self.extra_battery = {}
 
@@ -776,6 +777,7 @@ class variables:
 			self.opti.subject_to(self.max_power > self.climb_power[mission])
 			self.opti.subject_to(self.max_power > self.power[mission])
 			self.opti.subject_to(self.max_power > self.power_bank[mission])
+			self.opti.subject_to(self.duration[mission] + self.duration_bank[mission] < 300)
 
 			self.opti.subject_to(self.power[mission] * self.duration[mission] + self.power_bank[mission] * self.duration_bank[mission] < self.available_battery )
 			self.extra_battery[mission] = self.available_battery  - self.power[mission] * self.duration[mission] - self.power_bank[mission] * self.duration_bank[mission]
