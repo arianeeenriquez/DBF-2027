@@ -14,6 +14,7 @@ class variables:
 		self.S = self.opti.variable(init_guess = 0.2, lower_bound = 0.01, upper_bound = 1)
 		self.AR = self.opti.variable(init_guess = 3, lower_bound = 2, upper_bound = 15)
 		# self.S=0.9
+		# self.AR = 5
 		# self.AR = (5.79 * units.foot) ** 2 / self.S
 		self.taper = 1
 		self.airfoil = asb.Airfoil("sd7032")
@@ -47,7 +48,7 @@ class variables:
 		self.mass_container = self.opti.variable(init_guess= 1, lower_bound = self.mass_sensor * self.ratio_container_sensor) #just the sensor
 		# self.mass_sensor = 8.5
 		# self.mass_container = 0
-		self.interference_factor = 1.5
+		self.interference_factor = 1.2
 		self.max_cruise_CL = 1.2
 		self.safety_factor_small = 1/0.8
 		self.safety_factor_large = 2.0
@@ -149,6 +150,7 @@ class variables:
 		self.lap_dist_straight = 609 # the straightaways
 		self.CL_max = 1.5
 		self.S_g = 600 * units.foot
+		self.e = 0.85
 
 	# ======================================================================
 	# DIMENSIONS
@@ -618,7 +620,7 @@ class variables:
 
 			self.CL[mission] = 2 * self.mass[mission] * self.g / (self.velocity[mission] ** 2 * self.S * self.rho)
 			self.CL_bank[mission] = 2 * self.N[mission] * self.mass[mission] * self.g / (self.velocity_bank[mission] ** 2 * self.S * self.rho)
-			self.CL_climb[mission] = 2 * self.mass[mission] * self.g * np.cos(self.min_climb_angle_rad) / (self.velocity[mission] ** 2 * self.S * self.rho)
+			self.CL_climb[mission] = 2 * self.mass[mission] * self.g * np.cos(self.min_climb_angle_rad) / (self.velocity_climb[mission] ** 2 * self.S * self.rho)
 
 			self.bank_radius[mission] = self.velocity_bank[mission]**2 / (self.g * self.N[mission] * np.sin(self.bank_angle_rad[mission]))
 
@@ -629,65 +631,110 @@ class variables:
 
 	def CD_plane_no_af(self):
 		self.CDp = 0.02
-		self.e = 0.9 #oswald efficiency
 
-		self.CDi = {}
-		self.CDi_bank = {}
-		self.CDi_climb = {}
+		def CD_gen(CL):
+			CDp = 0.00625 + 0.0183 * (CL - 0.05579)**2
+			CDi = CL ** 2 / (self.e * np.pi * self.AR)
+			return CDp + CDi
 
 		self.CD = {}
 		self.CD_bank = {}
 		self.CD_climb = {}
 
 		for mission in self.missions:
-			self.CDi[mission] = self.CL[mission] ** 2 / (self.e * np.pi * self.AR)
-			self.CD[mission] = self.CDp + self.CDi[mission]
-
-			self.CDi_bank[mission] = self.CL_bank[mission] ** 2 / (self.e * np.pi * self.AR)
-			self.CD_bank[mission] = self.CDp + self.CDi_bank[mission]
-
-			self.CDi_climb[mission] = self.CL_climb[mission] ** 2 / (self.e * np.pi * self.AR)
-			self.CD_climb[mission] = self.CDp + self.CDi_climb[mission]
-			# self.CD[mission] *= 2
+			self.CD_climb[mission] = CD_gen(self.CL_climb[mission])
+			self.CD[mission] = CD_gen(self.CL[mission])
+			self.CD_bank[mission] = CD_gen(self.CL_bank[mission])
 
 	def drag_no_af(self):
-		C_f = 0.004
-		ratio = self.sensor_height / self.sensor_length  #fineness ratio (d/l) of the sensor pod as a streamlined body
-		self.CD_fuse = 0.44 * ratio + 4 * C_f * (1 / ratio) + 4 * C_f * np.sqrt(ratio) #Hoerner 3-12, eqn 25 - on FRONTAL area, not S
-		A_sensor_frontal = self.sensor_height ** 2
+	    C_f = 0.004
+	    ratio = self.sensor_height / self.sensor_length  # fineness ratio (d/l)
 
-		A_fuse_frontal = 2* self.sensor_height ** 2
-		self.CD_lg = 0.25
-		A_lg = np.pi * 0.035**2 #frontal area of one gear leg
+	    self.CD_fuse = (
+	        0.44 * ratio
+	        + 4 * C_f * (1 / ratio)
+	        + 4 * C_f * np.sqrt(ratio)
+	    )  # Hoerner 3-12, eqn 25 - based on FRONTAL area, not S
 
-		#extra drag AREA (CD*A, not a CD-on-S) beyond the bare airframe, by mission - default 0, override as needed
-		self.extra_drag_area = {mission: 0 for mission in self.missions}
-		self.extra_drag_area["M3"] += self.CD_fuse * A_sensor_frontal #sensor pod exposed to the airstream on M3
-		for mission in self.missions:
-			self.extra_drag_area[mission] += self.CD_lg * A_lg #landing gear, assumed present on both missions
-			self.extra_drag_area[mission] += self.CD_fuse * A_fuse_frontal
+	    A_sensor_frontal = self.sensor_height ** 2
+	    A_fuse_frontal = 2 * self.sensor_height ** 2
 
-		self.drag = {}
-		self.drag_bank = {}
-		self.drag_climb = {}
+	    self.CD_lg = 0.25
+	    A_lg = np.pi * 0.035**2  # frontal area of one gear leg
 
-		self.CDreal ={}
-		self.CDreal_bank = {}
-		self.CDreal_climb = {}
+	    # Extra drag AREA (CD*A, not a CD-on-S) beyond the bare airframe
+	    # by mission - default 0, override as needed
+	    self.extra_drag_area = {mission: 0 for mission in self.missions}
 
-		for mission in self.missions:
-			self.drag[mission] = self.q[mission] * (self.CD[mission] * self.S + self.extra_drag_area[mission])
-			self.drag[mission] *= self.interference_factor
-			self.CDreal[mission] = self.drag[mission]/(self.q[mission] * self.S)
+	    self.extra_drag_area["M3"] += self.CD_fuse * A_sensor_frontal
 
-			self.drag_bank[mission] = self.q_bank[mission] * (self.CD_bank[mission] * self.S + self.extra_drag_area[mission])
-			self.drag_bank[mission] *= self.interference_factor
-			self.CDreal_bank[mission] = self.drag_bank[mission]/(self.q_bank[mission] * self.S)
+	    for mission in self.missions:
+	        self.extra_drag_area[mission] += self.CD_lg * A_lg
+	        self.extra_drag_area[mission] += self.CD_fuse * A_fuse_frontal
 
-			self.drag_climb[mission] = self.q_climb[mission] * (self.CD_climb[mission] * self.S + self.extra_drag_area[mission])
-			self.drag_climb[mission] *= self.interference_factor
-			self.CDreal_climb[mission] = self.drag_bank[mission]/(self.q_climb[mission] * self.S)
+	    # --------------------------------------------------
+	    # Convert CL to alpha using the finite-wing lift curve
+	    # --------------------------------------------------
 
+	    CL_0 = 0.2              # Assumed CL at alpha = 0
+	    a0 = 2 * np.pi          # 2D lift-curve slope [1/rad]
+	    a = a0 / (1 + a0 / (np.pi * self.AR))  # 3D lift-curve slope [1/rad]
+
+	    # --------------------------------------------------
+	    # Original drag calculations
+	    # --------------------------------------------------
+
+	    self.drag = {}
+	    self.drag_bank = {}
+	    self.drag_climb = {}
+
+	    self.CDreal = {}
+	    self.CDreal_bank = {}
+	    self.CDreal_climb = {}
+
+	    for mission in self.missions:
+
+	        # Cruise / main flight condition
+	        alpha = (self.CL[mission] - CL_0) / a  # alpha in radians
+	        area_factor = 1 + 0.5 * alpha**2
+
+	        self.drag[mission] = self.q[mission] * (
+	            self.CD[mission] * self.S
+	            + self.extra_drag_area[mission] * area_factor
+	        )
+	        self.drag[mission] *= self.interference_factor
+
+	        self.CDreal[mission] = (
+	            self.drag[mission] / (self.q[mission] * self.S)
+	        )
+
+	        # Banked flight condition
+	        alpha_bank = (self.CL_bank[mission] - CL_0) / a  # alpha in radians
+	        area_factor_bank =  1 + 0.5 * alpha_bank**2
+
+	        self.drag_bank[mission] = self.q_bank[mission] * (
+	            self.CD_bank[mission] * self.S
+	            + self.extra_drag_area[mission] * area_factor_bank
+	        )
+	        self.drag_bank[mission] *= self.interference_factor
+
+	        self.CDreal_bank[mission] = (
+	            self.drag_bank[mission] / (self.q_bank[mission] * self.S)
+	        )
+
+	        # Climb flight condition
+	        alpha_climb = (self.CL_climb[mission] - CL_0) / a  # alpha in radians
+	        area_factor_climb = 1 + 0.5 * alpha_climb**2
+
+	        self.drag_climb[mission] = self.q_climb[mission] * (
+	            self.CD_climb[mission] * self.S
+	            + self.extra_drag_area[mission] * area_factor_climb
+	        )
+	        self.drag_climb[mission] *= self.interference_factor
+
+	        self.CDreal_climb[mission] = (
+	            self.drag_climb[mission] / (self.q_climb[mission] * self.S)
+	        )
 	# ======================================================================
 	# PERFORMANCE CONSTRAINTS
 	# ======================================================================
